@@ -1,0 +1,16 @@
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.cloud: DEBUG
+    org.springframework.cloud.sleuth: TRACE
+    org.springframework.cloud.sleuth.log: DEBUG
+    org.springframework.cloud.sleuth.trace: DEBUG
+
+server:
+  port: ${SERVICE_PORT:8080}
+  compression:
+    enabled: true
+    mime-types: application/json,text/css,application/javascript
+    min-response-size: 2048
+
+logging.file.name: logs/api-gateway-service.log

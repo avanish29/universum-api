@@ -1,0 +1,32 @@
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: ALWAYS
+
+server:
+  port: ${CONFIG_SERVER_PORT:8011}
+
+spring:
+  application:
+    name: universum-config-server
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/shared
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:${REGISTRY_SERVER_PORT:8761}/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+
+logging.file.name: logs/config-service.log

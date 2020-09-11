@@ -1,0 +1,17 @@
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: i18-service
+          uri: lb://universum-i18-service/{segment}
+          predicates:
+            - Path=/api/i18-service/{segment}/**
+          filters:
+            - StripPrefix=2
+        - id: universum-ui
+          uri: http://localhost:4200
+          predicates:
+            - Path=/**

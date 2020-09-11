@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: universum-apigateway
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            maxAge: 3600
+    config:
+      discovery:
+        enabled: true
+        service-id: universum-config-server
+
+

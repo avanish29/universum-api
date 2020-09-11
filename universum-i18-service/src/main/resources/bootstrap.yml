@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: universum-i18-service
+  cloud:
+    config:
+      discovery:
+        enabled: true
+        service-id: universum-config-server
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:${REGISTRY_SERVER_PORT:8761}/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}

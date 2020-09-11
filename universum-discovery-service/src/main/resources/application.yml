@@ -1,0 +1,13 @@
+server:
+  port: ${DISCOVERY_SERVER_PORT:8761}
+
+spring:
+  application:
+    name: universum-discovery-server
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+
+logging.file.name: logs/discovery-server.log
