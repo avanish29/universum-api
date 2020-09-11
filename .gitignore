@@ -3,3 +3,6 @@ logs
 /*.iml
 target
 /universum-api-gateway/*.iml
+/universum-i18-service/universum-i18-service.iml
+/universum-discovery-service/universum-discovery-service.iml
+/universum-config-service/universum-config-service.iml
