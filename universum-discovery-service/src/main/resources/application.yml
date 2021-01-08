@@ -2,12 +2,39 @@ server:
   port: ${DISCOVERY_SERVER_PORT:8761}
 
 spring:
+  mail:
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+          starttls:
+            enable: true
+    host: smtp.mailtrap.io
+    username: 0529c411797540
+    password: 4d520a0a3350b3
+    port: 587
+  boot:
+    admin:
+      context-path: /admin #A different context path for Spring boot admin server has been provided avoiding conflict with eureka
+      notify:
+        mail:
+          to: ${admin-mail.recipients}
+          from: ${admin-mail.from}
+          enabled: ${admin-mail.enabled:true}
+          ignore-changes:
+            - "OFFLINE:UP"
+            - "DOWN:UP"
   application:
     name: universum-discovery-server
 
 eureka:
   instance:
-    prefer-ip-address: true
-    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    hostname: discovery-service
+    prefer-ip-address: false
+    instance-id: ${spring.application.name}:${server.port}
 
-logging.file.name: logs/discovery-server.log
+logging.file.name: ../logs/discovery-server.log

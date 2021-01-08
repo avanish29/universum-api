@@ -14,5 +14,3 @@ spring:
       discovery:
         enabled: true
         service-id: universum-config-server
-
-

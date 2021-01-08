@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/resource_message
-    username: postgres
-    password: admin
+    username: root
+    password: root
   jpa:
     hibernate:
       ddl-auto: validate

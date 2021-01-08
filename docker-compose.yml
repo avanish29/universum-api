@@ -1,0 +1,68 @@
+version: '3.8'
+volumes:
+  postgresdata:
+services:
+  discovery-service:
+    build: ./universum-discovery-service
+    network_mode: bridge
+    container_name: discovery-service
+    volumes:
+      - ${PWD}/log:/app/logs/
+    expose:
+      - 8761
+    ports:
+      - 8761:8761
+    restart: unless-stopped
+    healthcheck:
+      test: "curl --fail --silent localhost:8761/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 2
+      
+  config-service:
+    build: ./universum-config-service
+    network_mode: bridge
+    container_name: config-service
+    volumes:
+      - ${PWD}/log:/app/logs/
+    expose:
+      - 8011
+    ports:
+      - 8011:8011
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+    restart: unless-stopped
+    depends_on:
+      - discovery-service
+    links:
+      - discovery-service
+    healthcheck:
+      test: "curl --fail --silent localhost:8011/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 2
+      
+  gateway-service:
+    build: ./universum-api-gateway
+    network_mode: bridge
+    container_name: gateway-service
+    volumes:
+      - ${PWD}/log:/app/logs/
+    expose:
+      - 8080
+    ports:
+      - 8080:8080
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+    restart: unless-stopped
+    depends_on:
+      - discovery-service
+      - config-service
+    links:
+      - discovery-service
+      - config-service
+    healthcheck:
+      test: "curl --fail --silent localhost:8080/actuator/health | grep UP || exit 1"
+      interval: 20s
+      timeout: 5s
+      retries: 2

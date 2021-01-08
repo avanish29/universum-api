@@ -11,6 +11,14 @@ spring:
             - Path=/api/i18-service/{segment}/**
           filters:
             - StripPrefix=2
+        
+        - id: security-service
+          uri: lb://security-service/{segment}
+          predicates:
+            - Path=/api/security-service/{segment}/**
+          filters:
+            - StripPrefix=2
+        
         - id: universum-ui
           uri: http://localhost:4200
           predicates:
