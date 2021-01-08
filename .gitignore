@@ -17,3 +17,6 @@ target
 /universum-security-service/*.project
 /universum-security-service/*.iml
 /universum-security-service/*.classpath
+/.settings
+/common-swagger/.settings
+/.project
