@@ -66,3 +66,21 @@ services:
       interval: 20s
       timeout: 5s
       retries: 2
+
+  security-service:
+    build: ./universum-security-service
+    network_mode: bridge
+    container_name: security-service
+    volumes:
+      - ${PWD}/log:/app/logs/
+    environment:
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+    restart: unless-stopped
+    depends_on:
+      - discovery-service
+      - config-service
+      - gateway-service
+    links:
+      - discovery-service
+      - config-service
+      - gateway-service
