@@ -13,7 +13,7 @@ spring:
             - StripPrefix=2
         
         - id: security-service
-          uri: lb://security-service/{segment}
+          uri: lb://universum-security-service/{segment}
           predicates:
             - Path=/api/security-service/{segment}/**
           filters:
