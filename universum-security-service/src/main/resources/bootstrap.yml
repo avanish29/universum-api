@@ -1,10 +1,10 @@
 spring:
   application:
-    name: universum-security-service
+    name: security-service
   cloud:
     config:
       discovery:
         enabled: true
-        service-id: universum-config-server
+        service-id: config-service
 
 logging:  level:    root: INFO

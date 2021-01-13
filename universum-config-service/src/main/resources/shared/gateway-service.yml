@@ -6,14 +6,14 @@ spring:
           enabled: true
       routes:
         - id: i18-service
-          uri: lb://universum-i18-service/{segment}
+          uri: lb://label-service/{segment}
           predicates:
-            - Path=/api/i18-service/{segment}/**
+            - Path=/api/label-service/{segment}/**
           filters:
             - StripPrefix=2
         
         - id: security-service
-          uri: lb://universum-security-service/{segment}
+          uri: lb://security-service/{segment}
           predicates:
             - Path=/api/security-service/{segment}/**
           filters:

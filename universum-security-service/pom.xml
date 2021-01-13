@@ -40,6 +40,11 @@
 		</dependency>
 		
 		<dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+		
+		<dependency>
 			<groupId>com.universum</groupId>
 			<artifactId>common-swagger</artifactId>
 			<version>${project.version}</version>

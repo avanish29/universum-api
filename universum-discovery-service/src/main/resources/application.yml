@@ -29,7 +29,7 @@ spring:
             - "OFFLINE:UP"
             - "DOWN:UP"
   application:
-    name: universum-discovery-server
+    name: discovery-service
 
 eureka:
   instance:

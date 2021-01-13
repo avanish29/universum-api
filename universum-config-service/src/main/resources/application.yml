@@ -12,7 +12,7 @@ server:
 
 spring:
   application:
-    name: universum-config-server
+    name: config-service
   profiles:
     active: native
   cloud:

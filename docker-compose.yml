@@ -1,50 +1,68 @@
 version: '3.8'
+networks: 
+  universum-network:
 volumes:
-  postgresdata:
+  universum-database-data:
 services:
+  postgesdb:
+    build: ./postgres
+    networks: 
+      - universum-network
+    container_name: postgesdb
+    volumes: 
+      - universum-database-data:/var/lib/postgresql/data
+    expose: 
+      - 5432
+    ports: 
+      - 5432:5432
+    environment: 
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - DATABASES_PER_SERVICE=securityservice,unisec,unisecroot:i18service,uniintl,uniintlroot
+    restart: unless-stopped
+
   discovery-service:
     build: ./universum-discovery-service
-    network_mode: bridge
+    networks: 
+      - universum-network
     container_name: discovery-service
     volumes:
-      - ${PWD}/log:/app/logs/
+      - ${PWD}/logs:/app/logs/
     expose:
       - 8761
     ports:
       - 8761:8761
     restart: unless-stopped
-    healthcheck:
-      test: "curl --fail --silent localhost:8761/actuator/health | grep UP || exit 1"
-      interval: 20s
-      timeout: 5s
-      retries: 2
+    depends_on:
+      - postgesdb
+    links:
+      - postgesdb
+    command: sh -c "/app/scripts/waitforservices.sh ${POSTGRES_SERVICE_NAME}:${POSTGRES_PORT} -t 50 -- java -Djava.security.egd=file:/dev/./urandom -jar /app/service.jar"
       
   config-service:
     build: ./universum-config-service
-    network_mode: bridge
+    networks: 
+      - universum-network
     container_name: config-service
     volumes:
-      - ${PWD}/log:/app/logs/
+      - ${PWD}/logs:/app/logs/
     expose:
       - 8011
     ports:
       - 8011:8011
     environment:
-      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+      - eureka.client.serviceUrl.defaultZone=http://${DISCOVERY_SERVICE_NAME}:${DISCOVERY_PORT}/eureka/
     restart: unless-stopped
     depends_on:
       - discovery-service
     links:
       - discovery-service
-    healthcheck:
-      test: "curl --fail --silent localhost:8011/actuator/health | grep UP || exit 1"
-      interval: 20s
-      timeout: 5s
-      retries: 2
-      
+    command: sh -c "/app/scripts/waitforservices.sh ${DISCOVERY_SERVICE_NAME}:${DISCOVERY_PORT} -t 50 -- java -Djava.security.egd=file:/dev/./urandom -jar /app/service.jar"
+    
   gateway-service:
     build: ./universum-api-gateway
-    network_mode: bridge
+    networks: 
+      - universum-network
     container_name: gateway-service
     volumes:
       - ${PWD}/log:/app/logs/
@@ -53,34 +71,27 @@ services:
     ports:
       - 8080:8080
     environment:
-      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+      - eureka.client.serviceUrl.defaultZone=http://${DISCOVERY_SERVICE_NAME}:${DISCOVERY_PORT}/eureka/
     restart: unless-stopped
     depends_on:
-      - discovery-service
       - config-service
     links:
-      - discovery-service
       - config-service
-    healthcheck:
-      test: "curl --fail --silent localhost:8080/actuator/health | grep UP || exit 1"
-      interval: 20s
-      timeout: 5s
-      retries: 2
+    command: sh -c "/app/scripts/waitforservices.sh ${CONFIGSERVER_SERVICE_NAME}:${CONFIGSERVER_PORT} -t 50 -- java -Djava.security.egd=file:/dev/./urandom -jar /app/service.jar"
 
   security-service:
     build: ./universum-security-service
-    network_mode: bridge
+    networks: 
+      - universum-network
     container_name: security-service
     volumes:
       - ${PWD}/log:/app/logs/
     environment:
-      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka/
+      - eureka.client.serviceUrl.defaultZone=http://${DISCOVERY_SERVICE_NAME}:${DISCOVERY_PORT}/eureka/
+      - spring.datasource.url=jdbc:postgresql://postgesdb:5432/unisec
     restart: unless-stopped
     depends_on:
-      - discovery-service
       - config-service
-      - gateway-service
     links:
-      - discovery-service
       - config-service
-      - gateway-service
+    command: sh -c "/app/scripts/waitforservices.sh ${CONFIGSERVER_SERVICE_NAME}:${CONFIGSERVER_PORT} -t 50 -- java -Djava.security.egd=file:/dev/./urandom -jar /app/service.jar"

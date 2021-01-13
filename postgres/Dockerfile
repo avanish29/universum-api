@@ -1,2 +1,3 @@
 FROM postgres:13.1-alpine
-COPY CREATE_DATABASE.sql /docker-entrypoint-initdb.d/CREATE_DATABASE.sql
+COPY create_database_per_service.sh /docker-entrypoint-initdb.d/create_database_per_service.sh
+RUN chmod +x /docker-entrypoint-initdb.d/create_database_per_service.sh

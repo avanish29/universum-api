@@ -1,11 +1,11 @@
 spring:
   application:
-    name: universum-i18-service
+    name: label-service
   cloud:
     config:
       discovery:
         enabled: true
-        service-id: universum-config-server
+        service-id: config-service
 
 eureka:
   client:

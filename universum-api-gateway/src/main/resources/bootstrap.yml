@@ -1,6 +1,6 @@
 spring:
   application:
-    name: universum-apigateway
+    name: gateway-service
   cloud:
     gateway:
       globalcors:
@@ -13,4 +13,4 @@ spring:
     config:
       discovery:
         enabled: true
-        service-id: universum-config-server
+        service-id: config-service
