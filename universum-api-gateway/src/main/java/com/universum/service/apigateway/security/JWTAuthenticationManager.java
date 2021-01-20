@@ -11,8 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.Assert;
-
-import com.universum.common.exception.UniversumAPIException;
+import org.springframework.web.server.ResponseStatusException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,7 +35,7 @@ public class JWTAuthenticationManager implements AuthenticationManager {
 		if(userDetails != null) {
 			if(!passwordEncoder.matches((String)tokenAuthentication.getCredentials(), userDetails.getPassword())) {
 				log.trace("Unable to match password for username '{0}'", userDetails.getUsername());
-				throw new UniversumAPIException(HttpStatus.PRECONDITION_FAILED, "Invalid password");
+				throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Invalid password");
 			}
 			tokenAuthentication = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), userDetails.getAuthorities());
 		}
@@ -51,7 +50,7 @@ public class JWTAuthenticationManager implements AuthenticationManager {
 				userDetails = this.userDetailsService.loadUserByUsername(authenticationToken.getName());
 			} catch(UsernameNotFoundException notFoundEx) {
 				log.trace("Unable to find user by username '{0}'", authenticationToken.getName());
-				throw new UniversumAPIException(HttpStatus.PRECONDITION_FAILED, "Invalid username", notFoundEx);
+				throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "Invalid username", notFoundEx);
 			}
 		}
 		return userDetails;

@@ -18,8 +18,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-
-import com.universum.common.exception.UniversumAPIException;
+import org.springframework.web.server.ResponseStatusException;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -51,7 +50,7 @@ public class JWTTokenProvider {
     public Authentication getAuthentication(final String authToken) {
     	if(StringUtils.isBlank(authToken) || !hasValidClaims(authToken)) {
     		log.debug("Invalid token, JWT token is either empty or null or invalid.");
-    		throw new UniversumAPIException(HttpStatus.UNAUTHORIZED, "Invalid token");
+    		throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
     	}
     	Claims claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(authToken).getBody();
     	Collection<? extends GrantedAuthority> roles = Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList());

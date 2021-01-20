@@ -68,7 +68,7 @@
 			<artifactId>jaxb-api</artifactId>
 		</dependency>
         
-        <dependency>
+        <!-- <dependency>
 			<groupId>com.universum</groupId>
 			<artifactId>universum-common</artifactId>
 			<version>${project.version}</version>
@@ -80,7 +80,7 @@
             </exclusions>
 		</dependency>
 
-        <!-- <dependency>
+        <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-sleuth</artifactId>
         </dependency>
