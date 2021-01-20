@@ -6,7 +6,6 @@ import javax.validation.constraints.NotBlank;
 import org.apache.commons.lang3.StringUtils;
 
 import lombok.Data;
-import lombok.Getter;
 
 @Data
 public final class UniversumPageRequest {

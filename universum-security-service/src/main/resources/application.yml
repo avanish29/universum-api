@@ -8,7 +8,7 @@ eureka:
   instance:
     hostname: security-service
     prefer-ip-address: false
-    instance-id: ${spring.application.name}:${server.port}
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
 
 logging.file.name: ../logs/security-service.log
 

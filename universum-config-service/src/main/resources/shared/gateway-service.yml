@@ -18,8 +18,3 @@ spring:
             - Path=/api/security-service/{segment}/**
           filters:
             - StripPrefix=2
-        
-        - id: universum-ui
-          uri: http://localhost:4200
-          predicates:
-            - Path=/**

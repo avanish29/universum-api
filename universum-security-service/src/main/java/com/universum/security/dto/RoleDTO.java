@@ -1,5 +1,6 @@
 package com.universum.security.dto;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -12,7 +13,8 @@ import lombok.Data;
 @Data
 @Builder
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class RoleDTO {
+public class RoleDTO implements Serializable {
+	private static final long serialVersionUID = -5237840804827593460L;
 	private Long id;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
 	private LocalDateTime created;

@@ -28,8 +28,8 @@ public class AppRoleService {
         
 		Page<ApplicationRole> pageResponse = roleRepository.findAllByDeletedFalse(pageRequest);
 		List<RoleDTO> roleDTOList = Optional.of(pageResponse.getContent()).orElseGet(Collections::emptyList).stream()
-                .map(role -> RoleDTO.fromEntity(role)).collect(Collectors.toList());
+                .map(RoleDTO::fromEntity).collect(Collectors.toList());
         
-        return new UniversumPageResponse<RoleDTO>(pageResponse.getTotalElements(), pageResponse.getTotalPages(), pageResponse.getNumber(), roleDTOList);
+        return new UniversumPageResponse<>(pageResponse.getTotalElements(), pageResponse.getTotalPages(), pageResponse.getNumber(), roleDTOList);
     }
 }

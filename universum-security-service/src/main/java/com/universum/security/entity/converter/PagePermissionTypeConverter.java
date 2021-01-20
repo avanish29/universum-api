@@ -8,9 +8,6 @@ import com.universum.security.util.PagePermissionType;
 @Converter(autoApply = true)
 public class PagePermissionTypeConverter implements AttributeConverter<PagePermissionType, String> {
 
-    public PagePermissionTypeConverter() {
-    }
-
     @Override
     public String convertToDatabaseColumn(PagePermissionType attribute) {
         return attribute != null ? attribute.getPermissionCode() : PagePermissionType.defaultType().getPermissionCode();
