@@ -9,10 +9,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>universum-i18-service</artifactId>
+    <artifactId>universum-label-service</artifactId>
     <packaging>jar</packaging>
-
-    <name>universum-i18-service</name>
+    <name>universum-label-service</name>
     <description>Internationalization service</description>
 
     <dependencies>

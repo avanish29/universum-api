@@ -10,8 +10,9 @@
 		<module>universum-api-gateway</module>
 		<module>universum-config-service</module>
 		<module>universum-discovery-service</module>
-        <module>universum-i18-service</module>
-		<module>universum-security-service</module>		
+        <module>universum-label-service</module>
+		<module>universum-security-service</module>
+		<module>universum-zuul-api-gateway</module>
 	</modules>
 
 	<parent>

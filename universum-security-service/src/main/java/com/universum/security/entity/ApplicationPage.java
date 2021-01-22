@@ -1,6 +1,8 @@
 package com.universum.security.entity;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+
 import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
@@ -9,6 +11,7 @@ import java.util.List;
 
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = false)
 @Audited
 @Table(name = "app_page", uniqueConstraints = { @UniqueConstraint(columnNames = { "name", "category" }) })
 public class ApplicationPage extends AbstractBaseEntity {

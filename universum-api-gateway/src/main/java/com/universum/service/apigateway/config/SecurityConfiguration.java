@@ -73,13 +73,6 @@ public class SecurityConfiguration {
         return new LoadBalancedReactiveUserDetailsService();
     }
 	
-	/*@Bean
-    public MapReactiveUserDetailsService reactiveUserDetailsService() {
-        UserDetails adminUser = User.builder().username("Admin").password("Admin123").roles("CONFIG_ADMIN", "LABLE_ADMIN").passwordEncoder(BCRYPT_PASSWORD_ENCODER).build();
-        UserDetails superUser = User.builder().username("SuperAdmin").password("Admin123").roles("SUPER_ADMIN").passwordEncoder(BCRYPT_PASSWORD_ENCODER).build();
-        return new MapReactiveUserDetailsService(adminUser, superUser);
-    }*/
-	
 	@Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

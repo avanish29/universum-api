@@ -18,13 +18,12 @@
     <dependency>
 	    <groupId>javax.validation</groupId>
 	    <artifactId>validation-api</artifactId>
-	    <version>${javax.validation.version}</version><!--$NO-MVN-MAN-VER$-->
 	</dependency>
     
 	<dependency>
 	    <groupId>org.hibernate</groupId>
 	    <artifactId>hibernate-validator</artifactId>
-	    <version>${hibernate.validator.version}</version><!--$NO-MVN-MAN-VER$-->
+	    <version>${hibernate.validator.version}</version>
 	</dependency>
     
   </dependencies>

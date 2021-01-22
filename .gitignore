@@ -20,3 +20,9 @@ target
 /.settings
 /common-swagger/.settings
 /.project
+/universum-zuul-api-gateway/.factorypath
+/universum-zuul-api-gateway/.project
+/universum-zuul-api-gateway/.dbeaver
+/universum-zuul-api-gateway/.settings
+/universum-zuul-api-gateway/target
+/universum-zuul-api-gateway/.classpath

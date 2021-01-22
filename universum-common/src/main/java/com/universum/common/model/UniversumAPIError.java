@@ -16,7 +16,7 @@ public class UniversumAPIError {
 	private String message;
 	private String debugMessage;
 
-	private UniversumAPIError() {
+	public UniversumAPIError() {
 		timestamp = LocalDateTime.now();
 	}
 
