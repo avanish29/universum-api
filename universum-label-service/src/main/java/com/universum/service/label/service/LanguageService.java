@@ -1,7 +1,8 @@
-package com.universum.service.i18service.service;
+package com.universum.service.label.service;
 
-import com.universum.service.i18service.entity.AvailableLanguage;
-import com.universum.service.i18service.repository.AvailableLanguageRepository;
+import com.universum.service.label.domin.AvailableLanguage;
+import com.universum.service.label.repository.AvailableLanguageRepository;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -46,7 +46,9 @@ class JWTTokenProviderTest {
 	}
 	
 	private Authentication buildAuthentication() {
-		List<GrantedAuthority> authorities = new ArrayList<>() {{ add(new SimpleGrantedAuthority("CONFIG_ADMIN")); add(new SimpleGrantedAuthority("LABEL_ADMIN")); }};
+		List<GrantedAuthority> authorities = new ArrayList<>(); 
+		authorities.add(new SimpleGrantedAuthority("CONFIG_ADMIN"));
+		authorities.add(new SimpleGrantedAuthority("LABEL_ADMIN"));
 		User user = new User("admin", "abcd", authorities);
 		Authentication authentication = new UsernamePasswordAuthenticationToken(user, "abcd", authorities);
 		return authentication;

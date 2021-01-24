@@ -7,8 +7,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationConverter;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 
 public class JWTTokenAuthenticationConverter implements AuthenticationConverter {
 	private static final String AUTHENTICATION_SCHEME_BEARER = "Bearer ";
@@ -36,7 +38,9 @@ public class JWTTokenAuthenticationConverter implements AuthenticationConverter 
 			throw new BadCredentialsException("Empty bearer authentication token");
 		}
 		
-		return tokenProvider.getAuthentication(ISOLATE_AUTHENTICATION_SCHEME_BEARER_VALUE.apply(header));
+		UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken)tokenProvider.getAuthentication(ISOLATE_AUTHENTICATION_SCHEME_BEARER_VALUE.apply(header));
+		authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+		return authentication;
 	}
 
 }

@@ -1,4 +1,4 @@
-package com.universum.service.i18service.entity;
+package com.universum.common.jpa.domin;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

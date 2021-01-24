@@ -1,9 +1,10 @@
-package com.universum.service.i18service.controller;
+package com.universum.service.label.web;
 
 import java.util.Map;
 
-import com.universum.service.i18service.entity.ResourceMessage;
-import com.universum.service.i18service.service.MessageService;
+import com.universum.service.label.domin.ResourceMessage;
+import com.universum.service.label.service.MessageService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

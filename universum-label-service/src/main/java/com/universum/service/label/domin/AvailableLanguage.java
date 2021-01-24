@@ -1,4 +1,4 @@
-package com.universum.service.i18service.entity;
+package com.universum.service.label.domin;
 
 import java.util.Set;
 
@@ -7,7 +7,10 @@ import javax.persistence.Entity;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.universum.common.jpa.domin.AbstractBaseEntity;
+
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 /**
@@ -17,6 +20,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "available_language")
 @Entity
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 public class AvailableLanguage extends AbstractBaseEntity {
 	private static final long serialVersionUID = 510614895831100389L;

@@ -59,8 +59,28 @@ services:
       - discovery-service
     command: sh -c "/app/scripts/waitforservices.sh ${DISCOVERY_SERVICE_NAME}:${DISCOVERY_PORT} -t 50 -- java -Djava.security.egd=file:/dev/./urandom -jar /app/service.jar"
     
+  #gateway-service:
+  #  build: ./universum-api-gateway
+  #  networks: 
+  #    - universum-network
+  #  container_name: gateway-service
+  #  volumes:
+  #    - ${PWD}/log:/app/logs/
+  #  expose:
+  #    - 8080
+  #  ports:
+  #    - 8080:8080
+  #  environment:
+  #    - eureka.client.serviceUrl.defaultZone=http://${DISCOVERY_SERVICE_NAME}:${DISCOVERY_PORT}/eureka/
+  #  restart: unless-stopped
+  #  depends_on:
+  #    - config-service
+  #  links:
+  #    - config-service
+  #  command: sh -c "/app/scripts/waitforservices.sh ${CONFIGSERVER_SERVICE_NAME}:${CONFIGSERVER_PORT} -t 50 -- java -Djava.security.egd=file:/dev/./urandom -jar /app/service.jar"
+  
   gateway-service:
-    build: ./universum-api-gateway
+    build: ./universum-zuul-api-gateway
     networks: 
       - universum-network
     container_name: gateway-service
@@ -78,7 +98,7 @@ services:
     links:
       - config-service
     command: sh -c "/app/scripts/waitforservices.sh ${CONFIGSERVER_SERVICE_NAME}:${CONFIGSERVER_PORT} -t 50 -- java -Djava.security.egd=file:/dev/./urandom -jar /app/service.jar"
-
+  
   security-service:
     build: ./universum-security-service
     networks: 

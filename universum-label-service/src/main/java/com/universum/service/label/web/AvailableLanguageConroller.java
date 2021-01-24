@@ -1,7 +1,8 @@
-package com.universum.service.i18service.controller;
+package com.universum.service.label.web;
 
-import com.universum.service.i18service.entity.AvailableLanguage;
-import com.universum.service.i18service.service.LanguageService;
+import com.universum.service.label.domin.AvailableLanguage;
+import com.universum.service.label.service.LanguageService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

@@ -1,11 +1,12 @@
-package com.universum.service.i18service.service;
+package com.universum.service.label.service;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.universum.service.i18service.entity.ResourceMessage;
-import com.universum.service.i18service.repository.ResourceMessageRepository;
+import com.universum.service.label.domin.ResourceMessage;
+import com.universum.service.label.repository.ResourceMessageRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

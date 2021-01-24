@@ -1,11 +1,12 @@
-package com.universum.service.i18service.repository;
+package com.universum.service.label.repository;
 
 import java.util.List;
 
-import com.universum.service.i18service.entity.ResourceMessage;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+
+import com.universum.service.label.domin.ResourceMessage;
 
 
 public interface ResourceMessageRepository extends CrudRepository<ResourceMessage, Long> {

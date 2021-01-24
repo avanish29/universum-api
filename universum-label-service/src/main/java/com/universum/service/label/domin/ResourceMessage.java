@@ -1,4 +1,4 @@
-package com.universum.service.i18service.entity;
+package com.universum.service.label.domin;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -8,6 +8,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.universum.common.jpa.domin.AbstractBaseEntity;
+
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,6 +22,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 public class ResourceMessage extends AbstractBaseEntity {
 	private static final long serialVersionUID = 4647833846123040755L;

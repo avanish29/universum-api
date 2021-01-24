@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -45,7 +44,7 @@ public class JWTAuthenticationManager implements AuthenticationManager {
 	
 	private UserDetails findUser(final UsernamePasswordAuthenticationToken authenticationToken) {
 		UserDetails userDetails = null;
-		if(authenticationToken != null && StringUtils.isNotBlank(authenticationToken.getName()) && SecurityContextHolder.getContext().getAuthentication() == null) {
+		if(authenticationToken != null && StringUtils.isNotBlank(authenticationToken.getName())) {
 			try {
 				log.info("Finding user by user name '{}'", authenticationToken.getName());
 				userDetails = this.userDetailsService.loadUserByUsername(authenticationToken.getName());

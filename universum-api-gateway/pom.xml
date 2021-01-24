@@ -12,7 +12,7 @@
     <artifactId>universum-api-gateway</artifactId>
     <packaging>jar</packaging>
 
-    <name>api-gateway</name>
+    <name>universum-api-gateway</name>
     <description>API proxy</description>
 
     <dependencies>

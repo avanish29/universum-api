@@ -1,19 +1,28 @@
 package com.universum.security.entity;
 
-import lombok.Data;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.NaturalId;
-import org.hibernate.annotations.NaturalIdCache;
-import org.hibernate.envers.Audited;
-
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.NaturalId;
+import org.hibernate.annotations.NaturalIdCache;
+import org.hibernate.envers.Audited;
+
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity(name = "AppRole")
-@Data
+@Getter
+@Setter
 @Table(name = "app_role", uniqueConstraints = { @UniqueConstraint(columnNames = { "name" }) })
 @Audited
 @NaturalIdCache

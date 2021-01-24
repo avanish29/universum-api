@@ -5,8 +5,8 @@
     <artifactId>universum-api</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>common-swagger</artifactId>
-  <name>common-swagger</name>
+  <artifactId>universum-common-swagger</artifactId>
+  <name>universum-common-swagger</name>
   
   <dependencies>
   	<dependency>

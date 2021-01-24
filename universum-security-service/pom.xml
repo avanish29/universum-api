@@ -46,7 +46,7 @@
         
 		<dependency>
 			<groupId>com.universum</groupId>
-			<artifactId>common-swagger</artifactId>
+			<artifactId>universum-common-swagger</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		
