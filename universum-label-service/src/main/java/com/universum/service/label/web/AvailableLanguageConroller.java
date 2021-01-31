@@ -1,13 +1,17 @@
 package com.universum.service.label.web;
 
-import com.universum.service.label.domin.AvailableLanguage;
-import com.universum.service.label.service.LanguageService;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.universum.common.model.UniversumPageRequest;
+import com.universum.common.model.UniversumPageResponse;
+import com.universum.service.label.dto.AvailableLanguageDTO;
+import com.universum.service.label.service.LanguageService;
 
 @RestController
 @RequestMapping("/languages")
@@ -16,12 +20,12 @@ public class AvailableLanguageConroller {
 	private LanguageService languageService;
 	
 	@GetMapping
-    public Iterable<AvailableLanguage> getAllLanguages(){
-        return languageService.getAllLanguages();
+    public UniversumPageResponse<AvailableLanguageDTO> getAllLanguages(@Valid UniversumPageRequest pageRequest){
+        return languageService.getAllLanguages(pageRequest);
     }
 	
 	@GetMapping("/{langCode}")
-    public AvailableLanguage getLanguagesByCode(@PathVariable String langCode){
+    public AvailableLanguageDTO getLanguagesByCode(@PathVariable String langCode){
 		return languageService.findByCode(langCode);
     }
 }

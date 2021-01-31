@@ -13,7 +13,7 @@ public final class UniversumPageRequest {
 	@NotBlank
 	private String query = StringUtils.EMPTY;
 	
-	@Min(value = 1, message = "Paging must start with page 1")
+	@Min(value = 0, message = "Paging must start with page 1")
 	private int offset = 0;
 	
 	@Min(value = 1, message = "You can request minimum 1 records")

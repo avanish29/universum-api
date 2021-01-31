@@ -1,13 +1,24 @@
-package com.universum.security.entity;
+package com.universum.service.security.entity;
 
-import com.universum.security.entity.converter.PagePermissionTypeConverter;
-import com.universum.security.util.PagePermissionType;
-import lombok.Data;
-import org.hibernate.envers.Audited;
-
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
+
+import javax.persistence.Column;
+import javax.persistence.Convert;
+import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
+import javax.persistence.Table;
+
+import org.hibernate.envers.Audited;
+
+import com.universum.service.security.entity.converter.PagePermissionTypeConverter;
+import com.universum.service.security.util.PagePermissionType;
+
+import lombok.Data;
 
 @Entity
 @Data

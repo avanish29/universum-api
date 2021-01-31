@@ -1,4 +1,4 @@
-package com.universum.security.dto;
+package com.universum.service.security.dto;
 
 import java.io.Serializable;
 import java.util.Set;

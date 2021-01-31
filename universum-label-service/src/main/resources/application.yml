@@ -1,12 +1,34 @@
 server:
   port: ${I18SERVICE_PORT:0}
+  
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${REGISTRY_SERVER_IP:localhost}:${REGISTRY_SERVER_PORT:8761}/eureka/
+  instance:
+    hostname: label-service
+    prefer-ip-address: false
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
 
-logging.file.name: logs/i18-service.log
+logging.file.name: ../logs/label-service.log
 
 spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/uniintl
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL82Dialect
+    show-sql: true
   flyway:
+    validate-on-migrate: false
     baseline-on-migrate: true
-    table: schema_version
+    table: schema_version  
+    
 management:
   endpoints:
     web:

@@ -1,4 +1,4 @@
-package com.universum.security.entity;
+package com.universum.service.security.entity;
 
 import lombok.Data;
 

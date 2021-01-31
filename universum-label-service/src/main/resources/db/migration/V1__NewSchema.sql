@@ -1,5 +1,3 @@
-CREATE DATABASE resource_message;
-
 -- public.hibernate_sequence
 CREATE SEQUENCE IF NOT EXISTS public.hibernate_sequence;
 

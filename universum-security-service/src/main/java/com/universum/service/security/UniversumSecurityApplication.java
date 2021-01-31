@@ -1,11 +1,13 @@
-package com.universum.security;
+package com.universum.service.security;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @EnableDiscoveryClient
+@ComponentScan(basePackages = {"com.universum.service.security", "com.universum.common"})
 public class UniversumSecurityApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(UniversumSecurityApplication.class, args);

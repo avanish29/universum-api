@@ -1,11 +1,11 @@
-package com.universum.security.dto;
+package com.universum.service.security.dto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.universum.security.entity.ApplicationRole;
+import com.universum.service.security.entity.ApplicationRole;
 
 import lombok.Builder;
 import lombok.Data;

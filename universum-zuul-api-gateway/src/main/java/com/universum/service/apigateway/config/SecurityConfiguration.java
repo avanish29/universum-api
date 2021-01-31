@@ -38,7 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @Slf4j
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-	private static final String[] AUTH_WHITELIST = {"/", "/*.html", "/**/*.html", "/**/*.css", "/**/*.js", "/authenticate/**", "/favicon.ico"};
+	private static final String[] AUTH_WHITELIST = {"/", "/*.html", "/**/*.html", "/**/*.css", "/**/*.js", "/authenticate/**", "/settings/**", "/messages/**", "/favicon.ico"};
 	
 	@Autowired
 	private LoadBalancedUserDetailsService userDetailsService;
@@ -64,7 +64,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         						// All JS, CSS & HTML pages should be publicly accessible
         						.antMatchers(AUTH_WHITELIST).permitAll()
         						// User with role SUPER_ADMIN has all permission
-        						//.antMatchers("/api/**").hasAuthority("ROLE_SUPER_ADMIN")
+        						//.antMatchers(HttpMethod.GET, "/api/label-service/**").permitAll()
         						// Our private endpoints
         		                .anyRequest().authenticated();
         

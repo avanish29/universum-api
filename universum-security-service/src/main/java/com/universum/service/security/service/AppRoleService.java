@@ -1,4 +1,4 @@
-package com.universum.security.service;
+package com.universum.service.security.service;
 
 import java.util.Collections;
 import java.util.List;
@@ -13,9 +13,9 @@ import org.springframework.stereotype.Service;
 
 import com.universum.common.model.UniversumPageRequest;
 import com.universum.common.model.UniversumPageResponse;
-import com.universum.security.dto.RoleDTO;
-import com.universum.security.entity.ApplicationRole;
-import com.universum.security.repository.AppRoleRepository;
+import com.universum.service.security.dto.RoleDTO;
+import com.universum.service.security.entity.ApplicationRole;
+import com.universum.service.security.repository.AppRoleRepository;
 
 @Service
 public class AppRoleService {

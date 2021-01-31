@@ -2,14 +2,18 @@ package com.universum.service.label.web;
 
 import java.util.Map;
 
-import com.universum.service.label.domin.ResourceMessage;
-import com.universum.service.label.service.MessageService;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.universum.common.model.UniversumPageRequest;
+import com.universum.common.model.UniversumPageResponse;
+import com.universum.service.label.dto.ResourceMessageDTO;
+import com.universum.service.label.service.MessageService;
 
 @RestController
 @RequestMapping("/messages")
@@ -18,8 +22,8 @@ public class MessageController {
 	private MessageService messageService;
 	
 	@GetMapping
-    public Iterable<ResourceMessage> getAllMessages(){
-        return messageService.getAllMessages();
+    public UniversumPageResponse<ResourceMessageDTO> getAllMessages(@Valid UniversumPageRequest pageRequest){
+        return messageService.getAllMessages(pageRequest);
     }
 	
 	@GetMapping("/{langCode}")

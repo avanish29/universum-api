@@ -1,4 +1,4 @@
-package com.universum.security.web;
+package com.universum.service.security.web;
 
 import javax.validation.Valid;
 
@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.universum.common.model.UniversumPageRequest;
 import com.universum.common.model.UniversumPageResponse;
-import com.universum.security.dto.RoleDTO;
-import com.universum.security.service.AppRoleService;
+import com.universum.service.security.dto.RoleDTO;
+import com.universum.service.security.service.AppRoleService;
 
 @RestController
 @RequestMapping(path = "/roles")

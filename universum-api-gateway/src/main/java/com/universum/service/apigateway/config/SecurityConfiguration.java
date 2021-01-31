@@ -42,6 +42,8 @@ public class SecurityConfiguration {
 			.and()
 			.authorizeExchange().pathMatchers("/actuator/**").permitAll()
 			.and()
+			.authorizeExchange().pathMatchers(HttpMethod.GET, "/api/label-service/**").permitAll()
+			.and()
 			.authorizeExchange().pathMatchers(HttpMethod.OPTIONS).permitAll()
 			.and()
 			.authorizeExchange().matchers(EndpointRequest.toAnyEndpoint()).hasAuthority("SUPER_ADMIN")

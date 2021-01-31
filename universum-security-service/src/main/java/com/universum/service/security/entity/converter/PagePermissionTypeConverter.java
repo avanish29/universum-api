@@ -1,9 +1,9 @@
-package com.universum.security.entity.converter;
+package com.universum.service.security.entity.converter;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-import com.universum.security.util.PagePermissionType;
+import com.universum.service.security.util.PagePermissionType;
 
 @Converter(autoApply = true)
 public class PagePermissionTypeConverter implements AttributeConverter<PagePermissionType, String> {

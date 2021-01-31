@@ -1,9 +1,10 @@
 package com.universum.service.label.domin;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
@@ -35,6 +36,6 @@ public class AvailableLanguage extends AbstractBaseEntity {
 	
 	private String label;
 	
-	@ManyToMany(mappedBy = "availableLanguageFk")
-	private Set<ResourceMessage> messages;
+	@ManyToMany(mappedBy = "availableLanguageFk", fetch = FetchType.LAZY)
+	private List<ResourceMessage> messages;
 }

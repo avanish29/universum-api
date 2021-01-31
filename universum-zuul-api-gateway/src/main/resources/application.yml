@@ -28,5 +28,17 @@ zuul:  routes:
       id: security-service
       service-id: security-service
       path: /api/security-service/**
-      strip-prefix: true
+      strip-prefix: true
+    
+    label-service:
+      id: lael-service
+      service-id: label-service
+      path: /api/label-service/**
+      strip-prefix: true
+      
+    resource-message:
+      id: resource-message
+      service-id: label-service
+      path: /messages/**
+      strip-prefix: false
 logging.file.name: ../logs/zuul-api-gateway-service.log

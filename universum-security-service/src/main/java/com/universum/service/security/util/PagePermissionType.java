@@ -1,4 +1,4 @@
-package com.universum.security.util;
+package com.universum.service.security.util;
 
 import java.util.Arrays;
 

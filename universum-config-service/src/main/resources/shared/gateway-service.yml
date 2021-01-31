@@ -5,7 +5,7 @@ spring:
         locator:
           enabled: true
       routes:
-        - id: i18-service
+        - id: label-service
           uri: lb://label-service/{segment}
           predicates:
             - Path=/api/label-service/{segment}/**

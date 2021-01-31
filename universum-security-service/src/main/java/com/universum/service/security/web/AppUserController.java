@@ -1,4 +1,4 @@
-package com.universum.security.web;
+package com.universum.service.security.web;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.universum.security.dto.UserDetails;
+import com.universum.service.security.dto.UserDetails;
 
 @RestController
 @RequestMapping(path = "/users")
