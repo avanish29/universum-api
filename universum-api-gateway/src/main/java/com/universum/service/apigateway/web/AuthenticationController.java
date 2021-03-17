@@ -1,13 +1,11 @@
 package com.universum.service.apigateway.web;
 
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
-import javax.validation.Validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,21 +16,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.universum.service.apigateway.dto.AuthenticationRequest;
-import com.universum.service.apigateway.dto.AuthenticationResponse;
-import com.universum.service.apigateway.dto.LoggedInUser;
-import com.universum.service.apigateway.security.jwt.JWTTokenProvider;
+import com.universum.common.auth.dto.AuthenticationRequest;
+import com.universum.common.auth.dto.AuthenticationResponse;
+import com.universum.common.auth.dto.UserDetailsResponse;
+import com.universum.common.auth.jwt.JWTTokenProvider;
 
-import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/authenticate")
-@Slf4j
 public class AuthenticationController {
-	@Autowired
-	private Validator validator;
-	
 	@Autowired
 	private JWTTokenProvider tokenProvider;
 	
@@ -40,23 +33,19 @@ public class AuthenticationController {
 	private ReactiveAuthenticationManager authenticationManager;
 
 	@PostMapping
-	public Mono<AuthenticationResponse> authenticate(@Valid @RequestBody AuthenticationRequest authRequest) {
-		Set<ConstraintViolation<AuthenticationRequest>> voilations = this.validator.validate(authRequest);
-		if(!voilations.isEmpty()) {
-			voilations.stream().forEach(voilation -> log.debug("Constratint violation error {0}", voilation.getMessage())); 
-			return Mono.error(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bad request"));
-		}
-		
+	public Mono<ResponseEntity<AuthenticationResponse>> authenticate(@Valid @RequestBody AuthenticationRequest authRequest) {
 		Authentication authenticationToken = new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword());
 		Mono<Authentication> authentication = this.authenticationManager.authenticate(authenticationToken);
 		authentication.doOnError(throwable -> {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Bad crendentials");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Incorrect username or password.");
         });
 		ReactiveSecurityContextHolder.withAuthentication(authenticationToken);
-		return authentication.map(auth -> { 
-			String jwt = tokenProvider.createToken(auth);
-			LoggedInUser userDetails = (LoggedInUser)auth.getDetails();
-            return new AuthenticationResponse(jwt, userDetails.getFirstName(), userDetails.getLastName());
+		return authentication.map(auth -> {
+			UserDetailsResponse user = (UserDetailsResponse) auth.getPrincipal();
+			return ResponseEntity.ok()
+					.header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.AUTHORIZATION)
+					.header(HttpHeaders.AUTHORIZATION, tokenProvider.createToken(auth))
+					.body(AuthenticationResponse.fromEntity(user));
         });
 	}
 }

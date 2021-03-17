@@ -58,10 +58,10 @@
         </dependency>
         
         <dependency>
-            <groupId>io.jsonwebtoken</groupId>
-            <artifactId>jjwt</artifactId>
-            <version>${jsonwebtoken.version}</version>
-        </dependency>
+			<groupId>com.universum</groupId>
+			<artifactId>universum-common-auth</artifactId>
+			<version>${project.version}</version>
+		</dependency>
         
         <dependency>
 			<groupId>javax.xml.bind</groupId>
@@ -103,7 +103,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.universum.service.apigateway.APIGatewayApplication</mainClass>
+                    <mainClass>com.universum.service.apigateway.ReactiveAPIGatewayApplication</mainClass>
                     <addResources>true</addResources>
                 </configuration>
                 <executions>

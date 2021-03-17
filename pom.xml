@@ -14,6 +14,9 @@
         <module>universum-label-service</module>
 		<module>universum-security-service</module>
 		<module>universum-zuul-api-gateway</module>
+		<module>universum-common-auth</module>
+		<module>universum-starter-security</module>
+		<module>universum-starter-jackson</module>
 	</modules>
 
 	<parent>

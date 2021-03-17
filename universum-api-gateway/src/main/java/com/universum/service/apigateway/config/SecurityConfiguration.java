@@ -1,6 +1,5 @@
 package com.universum.service.apigateway.config;
 
-import org.springframework.boot.actuate.autoconfigure.security.reactive.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,19 +16,18 @@ import org.springframework.security.web.server.context.NoOpServerSecurityContext
 import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
 import org.springframework.security.web.server.savedrequest.NoOpServerRequestCache;
 
+import com.universum.common.auth.jwt.JWTTokenProvider;
+import com.universum.common.auth.util.AuthenticationConstant;
 import com.universum.service.apigateway.security.JWTHeaderExchangeMatcher;
 import com.universum.service.apigateway.security.JWTReactiveAuthenticationManager;
 import com.universum.service.apigateway.security.JWTTokenAuthenticationConverter;
 import com.universum.service.apigateway.security.UnauthorizedAuthenticationEntryPoint;
-import com.universum.service.apigateway.security.jwt.JWTTokenProvider;
 import com.universum.service.apigateway.service.LoadBalancedReactiveUserDetailsService;
 
 @Configuration
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
 public class SecurityConfiguration {
-	private static final String[] AUTH_WHITELIST = {"/resources/**", "/webjars/**", "/authenticate/**", "/favicon.ico"};
-	
 	@Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http, UnauthorizedAuthenticationEntryPoint entryPoint, JWTTokenProvider tokenProvider) {
 		http.httpBasic().disable();
@@ -40,15 +38,11 @@ public class SecurityConfiguration {
 		http.securityContextRepository(NoOpServerSecurityContextRepository.getInstance());
 		http.exceptionHandling().authenticationEntryPoint(entryPoint)
 			.and()
-			.authorizeExchange().pathMatchers("/actuator/**").permitAll()
-			.and()
-			.authorizeExchange().pathMatchers(HttpMethod.GET, "/api/label-service/**").permitAll()
+			.authorizeExchange().pathMatchers(AuthenticationConstant.ACTUATOR_PATH).permitAll()
 			.and()
 			.authorizeExchange().pathMatchers(HttpMethod.OPTIONS).permitAll()
 			.and()
-			.authorizeExchange().matchers(EndpointRequest.toAnyEndpoint()).hasAuthority("SUPER_ADMIN")
-			.and()
-			.addFilterAt(webFilter(tokenProvider), SecurityWebFiltersOrder.AUTHENTICATION).authorizeExchange().pathMatchers(AUTH_WHITELIST).permitAll()
+			.addFilterAt(webFilter(tokenProvider), SecurityWebFiltersOrder.AUTHENTICATION).authorizeExchange().pathMatchers(AuthenticationConstant.AUTH_WHITELIST).permitAll()
 			.anyExchange().authenticated();
 		return http.build();
 	}

@@ -2,6 +2,9 @@ package com.universum.common.exception.handler;
 
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.ValidationException;
+
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -25,6 +28,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import com.universum.common.exception.NotFoundException;
 import com.universum.common.exception.UniversumAPIException;
 import com.universum.common.model.UniversumAPIError;
 import com.universum.common.model.UniversumAPIValidationError;
@@ -110,6 +114,7 @@ public final class UniversumAPIExceptionHandler extends ResponseEntityExceptionH
 
 	@ExceptionHandler(Exception.class)
 	protected ResponseEntity<Object> handleException(Exception ex) {
+		log.error("An error occurred while performing operation", ex);
 		UniversumAPIError apiError = new UniversumAPIError(HttpStatus.INTERNAL_SERVER_ERROR);
 		apiError.setMessage(ex.getMessage());
 		return buildResponseEntity(apiError);
@@ -127,6 +132,21 @@ public final class UniversumAPIExceptionHandler extends ResponseEntityExceptionH
         apiError.addValidationErrors(ex.getConstraintViolations());
         return buildResponseEntity(apiError);
     }
+	
+	@ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<Object> handleNotFoundException(HttpServletRequest request, NotFoundException ex) {
+		log.error("NotFoundException {} \n", request.getRequestURI(), ex);
+		UniversumAPIError apiError = new UniversumAPIError(HttpStatus.NOT_FOUND);
+		apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+	
+	@ExceptionHandler(ValidationException.class)
+	protected ResponseEntity<Object> handleValidationException(ValidationException ex) {
+		UniversumAPIError apiError = new UniversumAPIError(HttpStatus.BAD_REQUEST);
+        apiError.setMessage(ex.getMessage());
+		return buildResponseEntity(apiError);
+	}
 
 	private ResponseEntity<Object> buildResponseEntity(final UniversumAPIError apiError) {
 		return new ResponseEntity<>(apiError, apiError.getStatus());

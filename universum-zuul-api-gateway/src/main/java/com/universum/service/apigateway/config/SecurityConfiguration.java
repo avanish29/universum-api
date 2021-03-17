@@ -27,9 +27,10 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import com.universum.common.auth.jwt.JWTTokenProvider;
+import com.universum.common.auth.util.AuthenticationConstant;
 import com.universum.service.apigateway.security.JWTAuthenticationManager;
 import com.universum.service.apigateway.security.JWTTokenAuthenticationConverter;
-import com.universum.service.apigateway.security.JWTTokenProvider;
 import com.universum.service.apigateway.service.LoadBalancedUserDetailsService;
 
 import lombok.extern.slf4j.Slf4j;
@@ -38,8 +39,6 @@ import lombok.extern.slf4j.Slf4j;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @Slf4j
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-	private static final String[] AUTH_WHITELIST = {"/", "/*.html", "/**/*.html", "/**/*.css", "/**/*.js", "/authenticate/**", "/settings/**", "/messages/**", "/favicon.ico"};
-	
 	@Autowired
 	private LoadBalancedUserDetailsService userDetailsService;
 	
@@ -60,11 +59,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         // Set permissions on endpoints
         http.authorizeRequests().antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
         						// Actuator endpoints must be publicly accessible
-        						.antMatchers("/actuator/**").permitAll()
+        						.antMatchers(AuthenticationConstant.ACTUATOR_PATH).permitAll()
         						// All JS, CSS & HTML pages should be publicly accessible
-        						.antMatchers(AUTH_WHITELIST).permitAll()
+        						.antMatchers(AuthenticationConstant.AUTH_WHITELIST).permitAll()
         						// User with role SUPER_ADMIN has all permission
-        						//.antMatchers(HttpMethod.GET, "/api/label-service/**").permitAll()
+        						.antMatchers(HttpMethod.GET, "/api/label-service/**").permitAll()
         						// Our private endpoints
         		                .anyRequest().authenticated();
         

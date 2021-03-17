@@ -5,6 +5,8 @@ import lombok.EqualsAndHashCode;
 
 import org.hibernate.envers.Audited;
 
+import com.universum.common.jpa.domin.AbstractBaseEntity;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;

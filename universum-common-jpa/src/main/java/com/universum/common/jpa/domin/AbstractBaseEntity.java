@@ -9,7 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-
+import javax.persistence.Version;
 
 import lombok.Data;
 
@@ -21,17 +21,21 @@ public class AbstractBaseEntity implements Serializable {
 	@Id
 	@Column(unique = true)
 	@GeneratedValue(strategy=GenerationType.AUTO)
-	private Long id;
+	protected Long id;
 	
-	private LocalDateTime created;
+	protected LocalDateTime created;
 	
-	private Boolean deleted;
+	protected Boolean deleted;
 	
 	@Column(unique=true, nullable=false, updatable=false, length = 36)
-	private String guid;
+	protected String guid;
 	
 	@Column(name="last_update")
-	private LocalDateTime lastUpdate;
+	protected LocalDateTime lastUpdate;
+	
+	@Column(nullable = false)
+	@Version
+	protected int version;
 	
 	public AbstractBaseEntity() {
 		super();

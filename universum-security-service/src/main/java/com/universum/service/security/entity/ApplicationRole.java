@@ -1,13 +1,15 @@
 package com.universum.service.security.entity;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -16,6 +18,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.NaturalIdCache;
 import org.hibernate.envers.Audited;
+
+import com.universum.common.jpa.domin.AbstractBaseEntity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -34,10 +38,13 @@ public class ApplicationRole extends AbstractBaseEntity {
     private String description;
 
     @Column(name = "is_system")
-    private Boolean isSystem;
+    private Boolean isSystem = Boolean.FALSE;
 
-    @OneToMany(mappedBy = "appRole", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ApplicationPagePermission> pagePermissions = new ArrayList<>();
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(name = "app_role_permissions",
+        joinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")},
+        inverseJoinColumns = {@JoinColumn(name = "permission_id", referencedColumnName = "id")})
+    private List<ApplicationPermission> permissions;
 
     @Override
     public boolean equals(Object o) {

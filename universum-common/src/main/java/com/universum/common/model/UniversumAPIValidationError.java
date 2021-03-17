@@ -48,11 +48,11 @@ public class UniversumAPIValidationError extends UniversumAPIError {
     }
 	
 	private void addValidationError(final FieldError fieldError) {
-        this.addValidationError(fieldError.getObjectName(), fieldError.getField(), fieldError.getRejectedValue(), fieldError.getDefaultMessage());
+        this.addValidationError(fieldError.getObjectName(), fieldError.getField(), fieldError.getRejectedValue(), fieldError.getDefaultMessage(), fieldError.unwrap(ConstraintViolation.class).getMessageTemplate());
     }
 	
-	private void addValidationError(final String object, final String field, final Object rejectedValue, final String message) {
-		addValidationError(new ValidationError(object, field, rejectedValue, message));
+	private void addValidationError(final String object, final String field, final Object rejectedValue, final String message, final String messageKey) {
+		addValidationError(new ValidationError(object, field, rejectedValue, message, messageKey));
     }
 	
 	private void addValidationError(final ValidationError validationError) {
@@ -71,7 +71,7 @@ public class UniversumAPIValidationError extends UniversumAPIError {
     }
 	
 	private void addValidationError(final ConstraintViolation<?> cv) {
-        this.addValidationError(cv.getRootBeanClass().getSimpleName(), cv.getPropertyPath().toString(), cv.getInvalidValue(), cv.getMessage());
+        this.addValidationError(cv.getRootBeanClass().getSimpleName(), cv.getPropertyPath().toString(), cv.getInvalidValue(), cv.getMessage(), cv.getMessageTemplate());
     }
 	
 	@Data
@@ -82,6 +82,7 @@ public class UniversumAPIValidationError extends UniversumAPIError {
 	    private String field;
 	    private Object rejectedValue;
 	    private String message;
+	    private String messageKey;
 	    
 	    public ValidationError(final String object, final String message) {
 	    	this.object = object;

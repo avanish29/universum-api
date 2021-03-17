@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -34,11 +35,12 @@ public class JWTAuthenticationManager implements AuthenticationManager {
 		UserDetails userDetails = this.findUser(tokenAuthentication);
 		if(userDetails != null) {
 			if(!passwordEncoder.matches((String)tokenAuthentication.getCredentials(), userDetails.getPassword())) {
-				log.trace("Unable to match password for username '{}'", userDetails.getUsername());
-				throw new UniversumAPIException(HttpStatus.PRECONDITION_FAILED, "Invalid password");
+				log.debug("Unable to match password for username '{}'", userDetails.getUsername());
+				throw new UniversumAPIException(HttpStatus.UNAUTHORIZED, "Incorrect username or password.");
 			}
-			tokenAuthentication = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), userDetails.getAuthorities());
+			tokenAuthentication = new UsernamePasswordAuthenticationToken(userDetails, authentication.getCredentials(), userDetails.getAuthorities());
 		}
+		SecurityContextHolder.getContext().setAuthentication(tokenAuthentication);
 		return tokenAuthentication;
 	}
 	
@@ -49,8 +51,8 @@ public class JWTAuthenticationManager implements AuthenticationManager {
 				log.info("Finding user by user name '{}'", authenticationToken.getName());
 				userDetails = this.userDetailsService.loadUserByUsername(authenticationToken.getName());
 			} catch(UsernameNotFoundException notFoundEx) {
-				log.trace("Unable to find user by username '{}'", authenticationToken.getName());
-				throw new UniversumAPIException(HttpStatus.PRECONDITION_FAILED, "Invalid username", notFoundEx);
+				log.debug("Unable to find user by username '{}'", authenticationToken.getName());
+				throw new UniversumAPIException(HttpStatus.UNAUTHORIZED, "Incorrect username or password.");
 			}
 		}
 		return userDetails;

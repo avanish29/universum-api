@@ -1,3 +1,17 @@
+# ==================================================================================================
+# Standard Spring Boot properties.
+# Full reference is available at:
+# http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+# ==================================================================================================
+
+server:
+  port: ${SERVICE_PORT:9090}
+  compression:
+    enabled: true
+    mime-types: application/json,text/css,application/javascript
+    min-response-size: 2048
+
+
 management:
   endpoints:
     web:
@@ -7,12 +21,7 @@ management:
     health:
       show-details: ALWAYS
 
-server:
-  port: ${SERVICE_PORT:9090}
-  compression:
-    enabled: true
-    mime-types: application/json,text/css,application/javascript
-    min-response-size: 2048
+
 
 eureka:
   client:
@@ -34,11 +43,5 @@ zuul:  routes:
       id: lael-service
       service-id: label-service
       path: /api/label-service/**
-      strip-prefix: true
-      
-    resource-message:
-      id: resource-message
-      service-id: label-service
-      path: /messages/**
-      strip-prefix: false
+      strip-prefix: true
 logging.file.name: ../logs/zuul-api-gateway-service.log

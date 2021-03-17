@@ -4,6 +4,16 @@ networks:
 volumes:
   universum-database-data:
 services:
+  hazelcast:
+    image: hazelcast/hazelcast:4.1.1
+    networks: 
+      - universum-network
+    container_name: hazelcast
+    expose: 
+      - 5701
+    ports:
+      - 5701:5701
+        
   postgesdb:
     build: ./postgres
     networks: 

@@ -6,13 +6,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.universum.service.apigateway.repository.LoadBalancedUserDetailsRepository;
+import com.universum.common.auth.repository.UserDetailsRepository;
 
 @Service
 public class LoadBalancedUserDetailsService implements UserDetailsService {
 
 	@Autowired
-	private LoadBalancedUserDetailsRepository userDetailsRepository;
+	private UserDetailsRepository userDetailsRepository;
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

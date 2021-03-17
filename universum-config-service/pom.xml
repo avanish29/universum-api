@@ -25,6 +25,12 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-config-server</artifactId>
         </dependency>
+        
+        <dependency>
+			<groupId>com.universum</groupId>
+			<artifactId>universum-common</artifactId>
+			<version>${project.version}</version>
+		</dependency>
     </dependencies>
     
     <build>

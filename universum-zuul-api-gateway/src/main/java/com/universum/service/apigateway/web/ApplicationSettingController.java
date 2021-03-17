@@ -16,9 +16,9 @@ public class ApplicationSettingController {
 	private LoadBalancedSupportedLanguageService supportedLanguageService;
 	
 	@GetMapping
-	public AppSettingResponse authenticate() {
+	public AppSettingResponse getAppSetting() {
 		AppSettingResponse settingResponse = new AppSettingResponse();
-		settingResponse.setSupportedLanguages(supportedLanguageService.getAllSuppotedLaguages().getContents());
+		settingResponse.setSupportedLanguages(supportedLanguageService.getAllSuppotedLaguages());
 		return settingResponse;
 	}
 }

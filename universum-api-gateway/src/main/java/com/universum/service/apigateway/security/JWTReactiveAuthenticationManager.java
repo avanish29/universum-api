@@ -58,7 +58,7 @@ public class JWTReactiveAuthenticationManager implements ReactiveAuthenticationM
     }
 	
 	private UsernamePasswordAuthenticationToken buildAuthToken(final Authentication authentication, final UserDetails userDetails) {
-		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), userDetails.getAuthorities());
+		UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, authentication.getCredentials(), userDetails.getAuthorities());
 		authToken.setDetails(userDetails);
 		return authToken;
 	}

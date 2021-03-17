@@ -10,14 +10,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.server.authentication.ServerAuthenticationConverter;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.universum.service.apigateway.security.jwt.JWTTokenProvider;
+import com.universum.common.auth.jwt.JWTTokenProvider;
+import com.universum.common.auth.util.AuthenticationConstant;
 
 import reactor.core.publisher.Mono;
 
 public class JWTTokenAuthenticationConverter implements ServerAuthenticationConverter {
-	private static final String BEARER = "Bearer ";
-	private static final Predicate<String> MATCH_BEARER_LENGTH = authValue -> authValue.length() > BEARER.length();
-	private static final UnaryOperator<String> ISOLATE_BEARER_VALUE = authValue -> authValue.substring(BEARER.length(), authValue.length());
+	private static final Predicate<String> MATCH_BEARER_LENGTH = authValue -> authValue.length() > AuthenticationConstant.AUTHENTICATION_SCHEME_BEARER.length();
+	private static final UnaryOperator<String> ISOLATE_BEARER_VALUE = authValue -> authValue.substring(AuthenticationConstant.AUTHENTICATION_SCHEME_BEARER.length(), authValue.length());
 	
 	private final JWTTokenProvider tokenProvider;
 
