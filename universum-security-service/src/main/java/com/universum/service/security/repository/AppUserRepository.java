@@ -15,7 +15,7 @@ import com.universum.service.security.entity.ApplicationUser;
 public interface AppUserRepository extends JpaRepository<ApplicationUser, Long>{
 	public Page<ApplicationUser> findAllByDeletedFalse(final Pageable pageable);
 	
-	public ApplicationUser findByUsernameAndDeletedFalse(final String userName);
+	public Optional<ApplicationUser> findByUsernameAndDeletedFalse(final String userName);
 	
 	public default ApplicationUser findByIdNotDeleted(final Long id) {
 		Optional<ApplicationUser> userById = findById(id);

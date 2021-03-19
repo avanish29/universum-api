@@ -40,7 +40,7 @@ public class ApplicationRole extends AbstractBaseEntity {
     @Column(name = "is_system")
     private Boolean isSystem = Boolean.FALSE;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "app_role_permissions",
         joinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")},
         inverseJoinColumns = {@JoinColumn(name = "permission_id", referencedColumnName = "id")})

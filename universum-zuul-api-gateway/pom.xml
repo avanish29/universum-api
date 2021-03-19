@@ -44,15 +44,15 @@
 
 		<dependency>
 			<groupId>com.universum</groupId>
-			<artifactId>universum-common</artifactId>
+			<artifactId>universum-starter-security</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.universum</groupId>
 			<artifactId>universum-common-auth</artifactId>
 			<version>${project.version}</version>
-		</dependency>
+		</dependency> -->
 		
 		<dependency>
             <groupId>org.springframework.security</groupId>

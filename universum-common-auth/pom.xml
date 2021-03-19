@@ -23,9 +23,16 @@
 		</dependency>
 		
 		<dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>${jsonwebtoken.jjwt-jackson.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+		
+		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
-			<artifactId>jjwt</artifactId>
-			<version>${jsonwebtoken.version}</version>
+			<artifactId>jjwt-api</artifactId>
+			<version>${jsonwebtoken.jjwt-api.version}</version>
 		</dependency>
 
 		<dependency>

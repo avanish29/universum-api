@@ -1,70 +1,91 @@
-package com.universum.common.auth.jwt;
+package com.universum.security.jwt;
 
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
+import java.security.Key;
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpStatus;
+import javax.annotation.PostConstruct;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
-import org.springframework.web.server.ResponseStatusException;
+
+import com.universum.security.property.UniversumSecurityProperties;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
-import lombok.extern.slf4j.Slf4j;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 
-@Component
-@Slf4j
 public class JWTTokenProvider {
-	private static final String SALT_KEY = "$2y$10$GBIQaf6gEeU9im8RTKhIgOZ5q5haDA.A5GzocSr5CR.sU8OUsCUwq";
-    private static final int TOKEN_VALIDITY = 86400; // Value in second 24 hrs = 86400 seconds
-    private static final String AUTHORITIES_KEY = "ROLES";
-    
-    private static final String SECRET_KEY = Base64.getEncoder().encodeToString(SALT_KEY.getBytes(StandardCharsets.UTF_8));
-    private static final long TOKEN_VALIDITY_IN_MILLISECONDS = 1000L * TOKEN_VALIDITY;
-    
-    public String createToken(final Authentication authentication) {
+	private final Logger log = LoggerFactory.getLogger(JWTTokenProvider.class);
+	private static final String AUTHORITIES_KEY = "ROLES";
+	
+	private final UniversumSecurityProperties universumProperties;
+	
+	private Key secretKey;
+	
+	private long tokenValidityInMilliseconds;
+
+    private long tokenValidityInMillisecondsForRememberMe;
+	
+	public JWTTokenProvider(UniversumSecurityProperties universumProperties) {
+        this.universumProperties = universumProperties;
+    }
+	
+	@PostConstruct
+    public void init() {
+		String secret = universumProperties.getSecurity().getAuthentication().getJwt().getSecret();
+		byte[] keyBytes = Decoders.BASE64.decode(secret);
+		this.secretKey = Keys.hmacShaKeyFor(keyBytes);
+		this.tokenValidityInMilliseconds = 1000 * this.universumProperties.getSecurity().getAuthentication().getJwt().getTokenValidityInSeconds();
+	    this.tokenValidityInMillisecondsForRememberMe = 1000 * this.universumProperties.getSecurity().getAuthentication().getJwt().getTokenValidityInSecondsForRememberMe();
+	}
+	
+	public String createToken(final Authentication authentication, boolean rememberMe) {
     	Assert.notNull(authentication, "Authentication can not be null.");
     	String authorities = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(","));
+    	
+    	long now = (new Date()).getTime();
+        Date validity;
+        if (rememberMe) {
+            validity = new Date(now + this.tokenValidityInMillisecondsForRememberMe);
+        } else {
+            validity = new Date(now + this.tokenValidityInMilliseconds);
+        }
+    	
     	return Jwts.builder()
     			   .setSubject(authentication.getName())
     			   .claim(AUTHORITIES_KEY, authorities)
-    			   .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
-    			   .setExpiration(Date.from(Instant.now().plus(Duration.ofMillis(TOKEN_VALIDITY_IN_MILLISECONDS))))
+    			   .signWith(secretKey, SignatureAlgorithm.HS512)
+    			   .setExpiration(validity)
     			   .setIssuedAt(Date.from(Instant.now()))
     			   .compact();
     }
-    
-    public Authentication getAuthentication(final String authToken) {
-    	if(StringUtils.isBlank(authToken) || !validateToken(authToken)) {
-    		log.debug("Invalid token, JWT token is either empty or null or invalid.");
-    		throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid token");
-    	}
-    	Claims claims = Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(authToken).getBody();
+	
+	public Authentication getAuthentication(final String authToken) {
+    	Claims claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(authToken).getBody();
     	Collection<? extends GrantedAuthority> roles = Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     	return new UsernamePasswordAuthenticationToken(new User(claims.getSubject(), "", roles), authToken, roles);
     }
-    
-    public boolean validateToken(final String authToken) {
+	
+	public boolean validateToken(final String authToken) {
     	boolean isValidToken = false;
     	try {
-    		Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(authToken);
+    		Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(authToken);
     		isValidToken = true;
     	} catch (SignatureException signatureException) {
             log.info("Invalid JWT signature.");

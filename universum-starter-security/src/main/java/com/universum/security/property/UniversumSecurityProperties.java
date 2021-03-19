@@ -1,9 +1,9 @@
-package com.universum.common.configuration.property;
+package com.universum.security.property;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "universum", ignoreUnknownFields = false)
-public class UniversumProperties {
+public class UniversumSecurityProperties {
 	private final Security security = new Security();
 	
 	public Security getSecurity() {
@@ -12,9 +12,24 @@ public class UniversumProperties {
 	
 	public static class Security {
 		private final Authentication authentication = new Authentication();
+		private String[] userEndpoints = new String[] {};
+		private String[] adminEndpoints = new String[] {};
+		private String[] unsecuredEndpoints = new String[] {"/public**"};
 		
 		public Authentication getAuthentication() {
 			return authentication;
+		}
+		
+		public String[] getUserEndpoints() {
+			return userEndpoints;
+		}
+		
+		public String[] getAdminEndpoints() {
+			return adminEndpoints;
+		}
+		
+		public String[] getUnsecuredEndpoints() {
+			return unsecuredEndpoints;
 		}
 		
 		public static class Authentication {
