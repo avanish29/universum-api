@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,9 +16,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import com.universum.security.jwt.JWTConfigurer;
 import com.universum.security.jwt.JWTTokenProvider;
@@ -39,13 +35,6 @@ public class JWTSecurityConfig extends WebSecurityConfigurerAdapter {
 	public JWTSecurityConfig(UniversumSecurityProperties universumProperties) {
         this.universumProperties = universumProperties;
     }
-	
-	/*
-	 * @Bean
-	 * 
-	 * @Override public AuthenticationManager authenticationManagerBean() throws
-	 * Exception { return super.authenticationManagerBean(); }
-	 */
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -83,18 +72,6 @@ public class JWTSecurityConfig extends WebSecurityConfigurerAdapter {
 	private JWTConfigurer securityConfigurerAdapter() {
         return new JWTConfigurer(tokenProvider());
     }
-	
-	/**@Bean
-    public CorsFilter corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
-    }**/
 	
 	@Bean
     public JWTTokenProvider tokenProvider() {
