@@ -46,7 +46,7 @@
 		<sonar.projectKey>avanish29_universum-api</sonar.projectKey>
 		<sonar.organization>avanish29</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
-		<sonar.modulekey>${project.groupId}:${project.artifactId}</sonar.modulekey>
+		<sonar.moduleKey>${project.groupId}:${project.artifactId}</sonar.moduleKey>
 	</properties>
 
 	<dependencies>
