@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.universum.common.exception.handler.UniversumAPIExceptionHandler

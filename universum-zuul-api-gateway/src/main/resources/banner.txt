@@ -6,6 +6,6 @@
  ${AnsiColor.GREEN} / /__  | |__| | | |__| | | |____  ${AnsiColor.RED}   / ____ \  | |       _| |_    ${AnsiColor.YELLOW} | |__| |  / ____ \     | |    | |____     \  /\  /     / ____ \     | |   
  ${AnsiColor.GREEN}/_____|  \____/   \____/  |______| ${AnsiColor.RED}  /_/    \_\ |_|      |_____|   ${AnsiColor.YELLOW}  \_____| /_/    \_\    |_|    |______|     \/  \/     /_/    \_\    |_|   
  ${AnsiColor.GREEN}                                   ${AnsiColor.RED}                                ${AnsiColor.YELLOW}                                                                           
- ${AnsiColor.GREEN}===================================================================${AnsiColor.RED}==================================================================================================
+ ${AnsiColor.GREEN}===================================${AnsiColor.RED}================================${AnsiColor.YELLOW}================================================================================
  
  ${AnsiColor.BRIGHT_BLUE}:: Running Spring Boot ${spring-boot.version} :: :: ${AnsiColor.DEFAULT}

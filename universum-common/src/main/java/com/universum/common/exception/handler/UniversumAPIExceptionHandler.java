@@ -5,6 +5,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
 
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -35,11 +36,12 @@ import com.universum.common.model.UniversumAPIValidationError;
 
 import lombok.extern.slf4j.Slf4j;
 
+@Configuration
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
 @Component
 @Slf4j
-public final class UniversumAPIExceptionHandler extends ResponseEntityExceptionHandler {
+public class UniversumAPIExceptionHandler extends ResponseEntityExceptionHandler {
 	private static final String VALIDATION_ERROR_MSG = "Validation error";
 	
 	@Override
