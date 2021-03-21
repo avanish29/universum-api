@@ -25,7 +25,7 @@ import com.universum.service.apigateway.filter.pre.JWTTokenRelayFilter;
 
 @EnableDiscoveryClient
 @SpringBootApplication
-@EnableFeignClients(basePackages = {"com.universum.service.apigateway"})
+@EnableFeignClients
 @EnableZuulProxy
 @ComponentScan(basePackages = {"com.universum.common", "com.universum.service.apigateway"})
 public class APIGatewayApplication {

@@ -16,13 +16,12 @@ import org.springframework.security.web.server.context.NoOpServerSecurityContext
 import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
 import org.springframework.security.web.server.savedrequest.NoOpServerRequestCache;
 
-import com.universum.common.auth.jwt.JWTTokenProvider;
-import com.universum.common.auth.util.AuthenticationConstant;
+import com.universum.security.jwt.JWTTokenProvider;
+import com.universum.security.util.AuthenticationConstant;
 import com.universum.service.apigateway.security.JWTHeaderExchangeMatcher;
 import com.universum.service.apigateway.security.JWTReactiveAuthenticationManager;
 import com.universum.service.apigateway.security.JWTTokenAuthenticationConverter;
 import com.universum.service.apigateway.security.UnauthorizedAuthenticationEntryPoint;
-import com.universum.service.apigateway.service.LoadBalancedReactiveUserDetailsService;
 
 @Configuration
 @EnableWebFluxSecurity
@@ -66,7 +65,7 @@ public class SecurityConfiguration {
 	
 	@Bean
     public ReactiveUserDetailsService reactiveUserDetailsService() {
-        return new LoadBalancedReactiveUserDetailsService();
+        return null;
     }
 	
 	@Bean

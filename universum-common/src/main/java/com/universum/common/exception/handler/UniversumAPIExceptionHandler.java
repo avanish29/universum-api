@@ -40,6 +40,8 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public final class UniversumAPIExceptionHandler extends ResponseEntityExceptionHandler {
+	private static final String VALIDATION_ERROR_MSG = "Validation error";
+	
 	@Override
     protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String error = ex.getParameterName() + " parameter is missing";
@@ -58,7 +60,7 @@ public final class UniversumAPIExceptionHandler extends ResponseEntityExceptionH
 	@Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 		UniversumAPIValidationError apiError = new UniversumAPIValidationError(HttpStatus.BAD_REQUEST);
-        apiError.setMessage("Validation error");
+        apiError.setMessage(VALIDATION_ERROR_MSG);
         apiError.addValidationErrors(ex.getBindingResult().getFieldErrors());
         apiError.addValidationError(ex.getBindingResult().getGlobalErrors());
         return buildResponseEntity(apiError);
@@ -99,7 +101,7 @@ public final class UniversumAPIExceptionHandler extends ResponseEntityExceptionH
 	@Override
 	protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 		UniversumAPIValidationError apiError = new UniversumAPIValidationError(HttpStatus.BAD_REQUEST);
-        apiError.setMessage("Validation error");
+        apiError.setMessage(VALIDATION_ERROR_MSG);
         apiError.addValidationErrors(ex.getFieldErrors());
 		return buildResponseEntity(apiError);
 	}
@@ -107,7 +109,7 @@ public final class UniversumAPIExceptionHandler extends ResponseEntityExceptionH
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
 	protected ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex, WebRequest request) {
 		UniversumAPIError apiError = new UniversumAPIError(HttpStatus.BAD_REQUEST);
-		apiError.setMessage(String.format("The parameter '%s' of value '%s' could not be converted to type '%s'", ex.getName(), ex.getValue(), ex.getRequiredType().getSimpleName()));
+		apiError.setMessage(String.format("The parameter '%s' of value '%s' could not be converted to type '%s'", ex.getName(), ex.getValue(), ex.getRequiredType()));
 		apiError.setDebugMessage(ex.getMessage());
 		return buildResponseEntity(apiError);
 	}
@@ -128,7 +130,7 @@ public final class UniversumAPIExceptionHandler extends ResponseEntityExceptionH
 	@ExceptionHandler(javax.validation.ConstraintViolationException.class)
     protected ResponseEntity<Object> handleConstraintViolation(javax.validation.ConstraintViolationException ex) {
         UniversumAPIValidationError apiError = new UniversumAPIValidationError(HttpStatus.BAD_REQUEST);
-        apiError.setMessage("Validation error");
+        apiError.setMessage(VALIDATION_ERROR_MSG);
         apiError.addValidationErrors(ex.getConstraintViolations());
         return buildResponseEntity(apiError);
     }

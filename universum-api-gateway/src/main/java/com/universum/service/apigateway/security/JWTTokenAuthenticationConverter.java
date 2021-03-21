@@ -10,8 +10,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.server.authentication.ServerAuthenticationConverter;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.universum.common.auth.jwt.JWTTokenProvider;
-import com.universum.common.auth.util.AuthenticationConstant;
+import com.universum.security.jwt.JWTTokenProvider;
+import com.universum.security.util.AuthenticationConstant;
 
 import reactor.core.publisher.Mono;
 

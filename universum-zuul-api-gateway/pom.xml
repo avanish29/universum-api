@@ -48,12 +48,6 @@
 			<version>${project.version}</version>
 		</dependency>
 		
-		<!-- <dependency>
-			<groupId>com.universum</groupId>
-			<artifactId>universum-common-auth</artifactId>
-			<version>${project.version}</version>
-		</dependency> -->
-		
 		<dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>

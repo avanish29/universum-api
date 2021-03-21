@@ -8,7 +8,6 @@
 		<module>universum-common</module>
 		<module>universum-common-swagger</module>
 		<module>universum-common-jpa</module>
-		<module>universum-common-auth</module>
 		<module>universum-starter-security</module>
 		<module>universum-starter-jackson</module>
 		<module>universum-api-gateway</module>
