@@ -34,6 +34,7 @@ public class LanguageService {
 	private static final String ALL_LANGUAGE_CACHE_NAME = "LANGUAGES_CACHE";
 	private static final String LANGUAGE_CACHE_NAME = "LANGUAGE_CACHE";
 	private static final String LANGUAGE_MESSAGE_CACHE_NAME = "LANGUAGE_MESSAGE_CACHE";
+	private static final String LANGUAGE_NOT_FOUND_MSG = "Language with code '%s' does not exists!";
 	
 	@Autowired
 	private AvailableLanguageRepository languageRepository;
@@ -50,7 +51,7 @@ public class LanguageService {
     	log.debug("Calling findByCode() for language code {}.", langCode);
     	AvailableLanguage languageEntity = languageRepository.findByCode(langCode);
     	if(languageEntity == null || languageEntity.getDeleted()) {
-    		throw new NotFoundException(String.format("Language with code '%s' does not exists!", langCode));
+    		throw new NotFoundException(String.format(LANGUAGE_NOT_FOUND_MSG, langCode));
     	}
         return LanguageView.fromEntity(languageEntity);
     }
@@ -74,7 +75,7 @@ public class LanguageService {
     	log.debug("Updating language with code {}.", langCode);
     	AvailableLanguage languageEntity = languageRepository.findByCode(langCode);
     	if(languageEntity == null || languageEntity.getDeleted()) {
-    		throw new NotFoundException(String.format("Language with code '%s' does not exists!", langCode));
+    		throw new NotFoundException(String.format(LANGUAGE_NOT_FOUND_MSG, langCode));
     	}
     	AvailableLanguage updatedLanguageEntity = languageRepository.save(convertToEntity(updateRequest));
     	return LanguageView.fromEntity(updatedLanguageEntity);
@@ -87,7 +88,7 @@ public class LanguageService {
     	log.debug("Deleting language with code {}.", langCode);
     	AvailableLanguage languageEntity = languageRepository.findByCode(langCode);
     	if(languageEntity == null || languageEntity.getDeleted()) {
-    		throw new NotFoundException(String.format("Language with code '%s' does not exists!", langCode));
+    		throw new NotFoundException(String.format(LANGUAGE_NOT_FOUND_MSG, langCode));
     	}
     	languageRepository.deleteMessagesByLangCode(langCode);
     	languageRepository.delete(languageEntity);

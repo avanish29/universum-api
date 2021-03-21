@@ -17,6 +17,8 @@ public class UniversumApplication {
 	private static final Logger log = LoggerFactory.getLogger(UniversumApplication.class);
 	private static final String SPRING_PROFILE_DEFAULT = "spring.profiles.default";
 	
+	protected UniversumApplication() {}
+	
 	protected static void runApp(final String[] args, final Class<?> mainClass) {
 		SpringApplication app = new SpringApplication(mainClass);
 		addDefaultProfile(app);

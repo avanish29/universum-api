@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono;
 public class UnauthorizedAuthenticationEntryPoint implements ServerAuthenticationEntryPoint {
 	private static final String WWW_AUTHENTICATE = "WWW-Authenticate";
 	private static final String DEFAULT_REALM = "Realm";
-	private static String WWW_AUTHENTICATE_FORMAT = "Bearer realm=\"%s\"";
+	private static final String WWW_AUTHENTICATE_FORMAT = "Bearer realm=\"%s\"";
 	
 	private String headerValue = createHeaderValue(DEFAULT_REALM);
 	

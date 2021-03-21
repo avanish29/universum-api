@@ -1,6 +1,5 @@
 package com.universum.common.model;
 
-import java.io.Serializable;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -12,8 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public final class UniversumPageResponse<T> implements Serializable {
-	private static final long serialVersionUID = 309219557584034694L;
+public final class UniversumPageResponse<T> {
 	private long totalItems;
     private long totalPages;
     private long currentPage;

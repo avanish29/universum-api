@@ -67,7 +67,7 @@ public class AppRoleService {
 	
 	public void deleteRoles(final List<Long> ids) {
 		if(CollectionUtils.isNotEmpty(ids)) {
-			ids.stream().forEach(id -> this.deleteRole(id));
+			ids.stream().forEach(this::deleteRole);
 		}
 	}
 	

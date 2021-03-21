@@ -14,6 +14,7 @@ import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.universum.common.model.BaseResponse;
+import com.universum.service.security.entity.ApplicationRole;
 import com.universum.service.security.entity.ApplicationUser;
 
 import lombok.Data;
@@ -60,7 +61,7 @@ public class UserResponse extends BaseResponse implements UserDetails {
                 .lastSuccessfulLoginTime(entity.getLastSuccessfulLoginTime())
                 .passwordResetTokenGeneratedTime(entity.getPasswordResetTokenGeneratedTime())
                 .lastPasswordChangedTime(entity.getLastPasswordChangedTime())
-                .roles(entity.getRoles().stream().map(role -> role.getName()).collect(Collectors.toSet()))
+                .roles(entity.getRoles().stream().map(ApplicationRole::getName).collect(Collectors.toSet()))
                 .build();
     }
 

@@ -29,6 +29,7 @@ import com.universum.security.util.AuthenticationConstant;
 @Profile("!" + AuthenticationConstant.PROFILE_OAUTH2)
 public class JWTSecurityConfig extends WebSecurityConfigurerAdapter {
 	private final Logger log = LoggerFactory.getLogger(JWTSecurityConfig.class);
+	private static final String[] AUTH_WHITELIST = {"/", "/*.html", "/**/*.html", "/**/*.css", "/**/*.js", "/services/security/authenticate/**", "/authenticate/**", "/settings/**", "/services/label/messages/**", "/favicon.ico"};
 	
 	private final UniversumSecurityProperties universumProperties;
 	
@@ -55,7 +56,7 @@ public class JWTSecurityConfig extends WebSecurityConfigurerAdapter {
         						// Actuator endpoints must be publicly accessible
         						.antMatchers(AuthenticationConstant.ACTUATOR_PATH).permitAll()
         						// All JS, CSS & HTML pages should be publicly accessible
-        						.antMatchers(AuthenticationConstant.AUTH_WHITELIST).permitAll()
+        						.antMatchers(AUTH_WHITELIST).permitAll()
         						// Allow all admin endpoints for user with role ADMIN
         						.antMatchers(universumProperties.getSecurity().getAdminEndpoints()).hasRole("ADMIN")
         						// Allow all unsecured endpoints

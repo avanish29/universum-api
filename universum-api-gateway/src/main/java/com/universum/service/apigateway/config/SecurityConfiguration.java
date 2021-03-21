@@ -27,6 +27,8 @@ import com.universum.service.apigateway.security.UnauthorizedAuthenticationEntry
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
 public class SecurityConfiguration {
+	private static final String[] AUTH_WHITELIST = {"/", "/*.html", "/**/*.html", "/**/*.css", "/**/*.js", "/services/security/authenticate/**", "/authenticate/**", "/settings/**", "/services/label/messages/**", "/favicon.ico"};
+	
 	@Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http, UnauthorizedAuthenticationEntryPoint entryPoint, JWTTokenProvider tokenProvider) {
 		http.httpBasic().disable();
@@ -41,7 +43,7 @@ public class SecurityConfiguration {
 			.and()
 			.authorizeExchange().pathMatchers(HttpMethod.OPTIONS).permitAll()
 			.and()
-			.addFilterAt(webFilter(tokenProvider), SecurityWebFiltersOrder.AUTHENTICATION).authorizeExchange().pathMatchers(AuthenticationConstant.AUTH_WHITELIST).permitAll()
+			.addFilterAt(webFilter(tokenProvider), SecurityWebFiltersOrder.AUTHENTICATION).authorizeExchange().pathMatchers(AUTH_WHITELIST).permitAll()
 			.anyExchange().authenticated();
 		return http.build();
 	}
