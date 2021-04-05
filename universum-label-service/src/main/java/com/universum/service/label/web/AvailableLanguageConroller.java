@@ -23,6 +23,7 @@ import com.universum.security.util.AuthenticationConstant;
 import com.universum.service.label.dto.CreateLanguageRequest;
 import com.universum.service.label.dto.LanguageRequest;
 import com.universum.service.label.dto.LanguageView;
+import com.universum.service.label.dto.ResourceMessage;
 import com.universum.service.label.service.LanguageService;
 
 @RestController
@@ -60,6 +61,11 @@ public class AvailableLanguageConroller {
 	
 	@GetMapping("/{langCode}/messages")
     public Map<String, String> getMessagesByLangCode(@PathVariable String langCode){
+		return languageService.findMessagesByLangCode(langCode);
+    }
+	
+	@PostMapping("/{langCode}/messages")
+    public Map<String, String> createMessage(@PathVariable String langCode, @RequestBody @Valid ResourceMessage requestBody){
 		return languageService.findMessagesByLangCode(langCode);
     }
 	
