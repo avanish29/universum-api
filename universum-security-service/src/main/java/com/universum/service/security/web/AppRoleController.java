@@ -27,7 +27,7 @@ import com.universum.service.security.dto.RoleResponse;
 import com.universum.service.security.service.AppRoleService;
 
 @RestController
-@RequestMapping(path = "/roles")
+@RequestMapping(path = "/api/admin/security/roles")
 public class AppRoleController {
 	@Autowired
 	private AppRoleService roleService;

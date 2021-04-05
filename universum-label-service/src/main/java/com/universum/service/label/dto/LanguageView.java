@@ -2,6 +2,7 @@ package com.universum.service.label.dto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -25,15 +26,21 @@ public class LanguageView implements Serializable {
 	private Boolean isDefault;
 	private String label;
 	
-	public static LanguageView fromEntity(final AvailableLanguage entity) {
+	public static LanguageView fromEntity(final Optional<AvailableLanguage> entity) {
+		if(!entity.isPresent()) return null;
+		AvailableLanguage languageEntity = entity.get();
         return LanguageView.builder()
-                .id(entity.getId())
-                .created(entity.getCreated())
-                .lastUpdate(entity.getLastUpdate())
-                .code(entity.getCode())
-                .dir(entity.getDir().toString())
-                .isDefault(entity.getIsDefault())
-                .label(entity.getLabel())
+                .id(languageEntity.getId())
+                .created(languageEntity.getCreated())
+                .lastUpdate(languageEntity.getLastUpdate())
+                .code(languageEntity.getCode())
+                .dir(languageEntity.getDir().toString())
+                .isDefault(languageEntity.getIsDefault())
+                .label(languageEntity.getLabel())
                 .build();
     }
+	
+	public static LanguageView fromEntity(final AvailableLanguage entity) {
+		return fromEntity(Optional.of(entity));
+	}
 }

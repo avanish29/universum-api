@@ -1,6 +1,5 @@
 package com.universum.service.security.dto;
 
-import java.io.Serializable;
 import java.util.Set;
 
 import javax.validation.constraints.Email;
@@ -13,15 +12,9 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class CreateUserRequest implements Serializable {
-	private static final long serialVersionUID = -3779637161477037500L;
-
-	@NotBlank(message = "Username is required")
-	@Size(max = 255)
-    private String username;
-	
+public class UpdateUserRequest {
 	@NotBlank(message = "First name is required")
-	@Size(max = 255)
+	@Size(max = 255, message = "")
     private String firstName;
 	
 	@NotBlank(message = "Last name is required")
@@ -29,17 +22,11 @@ public class CreateUserRequest implements Serializable {
     private String lastName;
 	
 	@NotBlank(message = "Email is required") 
-	@Email
+	@Email(message = "Please enter a valid email.")
 	@Size(max = 255)
     private String email;
 	
-	@NotBlank(message = "Password is required")
-    private String password;
-    
-	@NotBlank(message = "Repassword is required")
-    private String rePassword;
-    
 	@NotNull(message = "Roles are required")
-    @Size(min = 1)
+    @Size(min = 1, max = 5, message = "Authorities must be between {min} and {max}")
     private Set<@NotBlank String> roles;
 }

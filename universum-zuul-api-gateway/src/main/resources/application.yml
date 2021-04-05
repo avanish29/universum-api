@@ -140,15 +140,20 @@ zuul:
     security-service:
       id: security-service
       service-id: security-service
-      path: /services/security/**
-      strip-prefix: true
+      path: /api/admin/security/**
+      strip-prefix: false
     
     label-service:
       id: lael-service
       service-id: label-service
-      path: /services/label/**
-      strip-prefix: true
+      path: /api/admin/languages/**
+      strip-prefix: false
     
+    lang-service:
+      id: lang-service
+      service-id: label-service
+      path: /languages/**
+      strip-prefix: false
 # ===================================================================
 # Application specific properties
 # ===================================================================

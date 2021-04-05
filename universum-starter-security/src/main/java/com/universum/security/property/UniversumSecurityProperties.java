@@ -14,7 +14,7 @@ public class UniversumSecurityProperties {
 		private final Authentication authentication = new Authentication();
 		private String[] userEndpoints = new String[] {};
 		private String[] adminEndpoints = new String[] {};
-		private String[] unsecuredEndpoints = new String[] {"/public**"};
+		private String[] unsecuredGetEndpoints = new String[] {};
 		
 		public Authentication getAuthentication() {
 			return authentication;
@@ -24,12 +24,24 @@ public class UniversumSecurityProperties {
 			return userEndpoints;
 		}
 		
+		public void setUserEndpoints(String[] userEndpoints) {
+			this.userEndpoints = userEndpoints;
+		}
+		
 		public String[] getAdminEndpoints() {
 			return adminEndpoints;
 		}
 		
-		public String[] getUnsecuredEndpoints() {
-			return unsecuredEndpoints;
+		public void setAdminEndpoints(String[] adminEndpoints) {
+			this.adminEndpoints = adminEndpoints;
+		}
+		
+		public String[] getUnsecuredGetEndpoints() {
+			return unsecuredGetEndpoints;
+		}
+		
+		public void setUnsecuredGetEndpoints(String[] unsecuredGetEndpoints) {
+			this.unsecuredGetEndpoints = unsecuredGetEndpoints;
 		}
 		
 		public static class Authentication {

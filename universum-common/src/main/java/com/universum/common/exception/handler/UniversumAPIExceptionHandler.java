@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -37,7 +36,7 @@ import com.universum.common.model.UniversumAPIValidationError;
 import lombok.extern.slf4j.Slf4j;
 
 @Configuration
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Order(1000)
 @ControllerAdvice
 @Component
 @Slf4j
@@ -151,7 +150,7 @@ public class UniversumAPIExceptionHandler extends ResponseEntityExceptionHandler
         apiError.setMessage(ex.getMessage());
 		return buildResponseEntity(apiError);
 	}
-
+	
 	private ResponseEntity<Object> buildResponseEntity(final UniversumAPIError apiError) {
 		return new ResponseEntity<>(apiError, apiError.getStatus());
 	}

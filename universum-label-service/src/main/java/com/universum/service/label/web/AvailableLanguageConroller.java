@@ -8,6 +8,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,13 +19,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.universum.security.util.AuthenticationConstant;
 import com.universum.service.label.dto.CreateLanguageRequest;
 import com.universum.service.label.dto.LanguageRequest;
 import com.universum.service.label.dto.LanguageView;
 import com.universum.service.label.service.LanguageService;
 
 @RestController
-@RequestMapping("/languages")
+@RequestMapping("/api/admin/languages")
+@PreAuthorize("hasAnyRole('" + AuthenticationConstant.SYSTEM_ADMIN + "', '" + AuthenticationConstant.SUPER_ADMIN + "')")
 public class AvailableLanguageConroller {
 	@Autowired
 	private LanguageService languageService;
@@ -35,7 +38,7 @@ public class AvailableLanguageConroller {
     }
 	
 	@PostMapping()
-	public ResponseEntity<LanguageView> createRole(@RequestBody @Valid CreateLanguageRequest createRequest) {
+	public ResponseEntity<LanguageView> createLanguage(@RequestBody @Valid CreateLanguageRequest createRequest) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(languageService.addLanguage(createRequest));
 	}
 	
@@ -51,7 +54,7 @@ public class AvailableLanguageConroller {
 	
 	@DeleteMapping("{langCode}")
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
-	public void deleteRole(@PathVariable String langCode) {
+	public void deleteLanguage(@PathVariable String langCode) {
 		languageService.deleteLanguage(langCode);
 	}
 	
@@ -59,4 +62,10 @@ public class AvailableLanguageConroller {
     public Map<String, String> getMessagesByLangCode(@PathVariable String langCode){
 		return languageService.findMessagesByLangCode(langCode);
     }
+	
+	@DeleteMapping("/{langCode}/messages/{messageKey}")
+	@ResponseStatus(value = HttpStatus.NO_CONTENT)
+	public void deleteMessage(@PathVariable final String langCode, @PathVariable final String messageKey) {
+		languageService.deleteMessage(langCode, messageKey);
+	}
 }

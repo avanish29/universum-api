@@ -30,7 +30,7 @@ import lombok.ToString;
 public class AvailableLanguage extends AbstractBaseEntity {
 	private static final long serialVersionUID = 510614895831100389L;
 	
-	@Column(unique=true, nullable=false, updatable=false, length = 36)
+	@Column(unique=true, nullable=false, length = 36)
 	private String code;
 	
 	@Enumerated(EnumType.STRING)

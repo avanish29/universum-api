@@ -60,7 +60,13 @@
 		
 		<dependency>
 			<groupId>com.universum</groupId>
-			<artifactId>universum-common</artifactId>
+			<artifactId>universum-common-swagger</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.universum</groupId>
+			<artifactId>universum-starter-security</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		

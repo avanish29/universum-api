@@ -29,7 +29,7 @@ import com.universum.security.util.AuthenticationConstant;
 @Profile("!" + AuthenticationConstant.PROFILE_OAUTH2)
 public class JWTSecurityConfig extends WebSecurityConfigurerAdapter {
 	private final Logger log = LoggerFactory.getLogger(JWTSecurityConfig.class);
-	private static final String[] AUTH_WHITELIST = {"/", "/*.html", "/**/*.html", "/**/*.css", "/**/*.js", "/services/security/authenticate/**", "/authenticate/**", "/settings/**", "/services/label/messages/**", "/favicon.ico"};
+	private static final String[] AUTH_WHITELIST = {"/", "/*.html", "/**/*.html", "/**/*.css", "/**/*.js", "/authenticate/**", "/settings/**", "/favicon.ico"};
 	
 	private final UniversumSecurityProperties universumProperties;
 	
@@ -59,10 +59,10 @@ public class JWTSecurityConfig extends WebSecurityConfigurerAdapter {
         						.antMatchers(AUTH_WHITELIST).permitAll()
         						// Allow all admin endpoints for user with role ADMIN
         						.antMatchers(universumProperties.getSecurity().getAdminEndpoints()).hasRole("ADMIN")
-        						// Allow all unsecured endpoints
-        						.antMatchers(universumProperties.getSecurity().getUnsecuredEndpoints()).permitAll()
+        						// Allow all unsecured get endpoints
+        						.antMatchers(HttpMethod.GET, universumProperties.getSecurity().getUnsecuredGetEndpoints()).permitAll()
         						// User with role SUPER_ADMIN has all permission
-        						.antMatchers(HttpMethod.GET, "/services/label/**").permitAll()
+        						.antMatchers(HttpMethod.GET, "/languages/**").permitAll()
         						// Our private endpoints
         		                .anyRequest().authenticated().and();
         

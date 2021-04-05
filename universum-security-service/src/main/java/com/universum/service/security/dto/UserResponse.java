@@ -12,6 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.universum.common.model.BaseResponse;
 import com.universum.service.security.entity.ApplicationRole;
@@ -19,18 +20,27 @@ import com.universum.service.security.entity.ApplicationUser;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @Data
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class UserResponse extends BaseResponse implements UserDetails {
 	private static final long serialVersionUID = 8827362407675433977L;
+	@ToString.Exclude
 	private String username;
+	@Getter(onMethod = @__( @JsonIgnore ))
+	@ToString.Exclude
 	private String passwordHash;
+	@ToString.Exclude
     private String firstName;
+	@ToString.Exclude
     private String lastName;
+	@ToString.Exclude
     private String emailAddress;
     private Set<String> roles;
     private LocalDateTime emailTokenGeneratedTime;
@@ -43,8 +53,9 @@ public class UserResponse extends BaseResponse implements UserDetails {
     private LocalDateTime passwordResetTokenGeneratedTime;
     private LocalDateTime lastPasswordChangedTime;
     
-    public static UserResponse fromEntity(final ApplicationUser entity) {
-        return builder()
+    public static UserResponse fromEntity(final ApplicationUser entity, boolean appendRoles) {
+    	if(entity == null) return null;
+    	UserResponse response = builder()
                 .id(entity.getId())
                 .created(entity.getCreated())
                 .lastUpdate(entity.getLastUpdate())
@@ -61,11 +72,15 @@ public class UserResponse extends BaseResponse implements UserDetails {
                 .lastSuccessfulLoginTime(entity.getLastSuccessfulLoginTime())
                 .passwordResetTokenGeneratedTime(entity.getPasswordResetTokenGeneratedTime())
                 .lastPasswordChangedTime(entity.getLastPasswordChangedTime())
-                .roles(entity.getRoles().stream().map(ApplicationRole::getName).collect(Collectors.toSet()))
                 .build();
+    	if(appendRoles) {
+    		response.setRoles(entity.getRoles().stream().map(ApplicationRole::getName).collect(Collectors.toSet()));
+    	}
+    	return response;
     }
 
 	@Override
+	@JsonIgnore
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		List<GrantedAuthority> authorities = new ArrayList<>(roles.size());
 		for (String role : roles) {
@@ -76,6 +91,7 @@ public class UserResponse extends BaseResponse implements UserDetails {
 	}
 
 	@Override
+	@JsonIgnore
 	public String getPassword() {
 		return this.passwordHash;
 	}

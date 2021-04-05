@@ -22,7 +22,7 @@ public interface AppRoleRepository extends JpaRepository<ApplicationRole, Long> 
 	@Query(nativeQuery = true, value = "SELECT count(user_id) from app_user_roles where role_id= :roleId")
 	public int countUserByRoleId(@Param("roleId") final Long roleId);
 	
-	public ApplicationRole findByNameAndDeletedFalse(final String name);
+	public Optional<ApplicationRole> findOneByNameAndDeletedFalse(final String name);
 	
 	public default ApplicationRole findByIdNotDeleted(final Long id) {
 		Optional<ApplicationRole> optionalRole = findById(id);

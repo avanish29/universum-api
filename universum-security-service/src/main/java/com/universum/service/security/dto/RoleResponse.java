@@ -13,7 +13,6 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class RoleResponse extends BaseResponse {
-	private static final long serialVersionUID = -5237840804827593460L;
 	private String name;
     private String description;
     private Boolean isSystem;

@@ -9,15 +9,18 @@ import java.util.stream.Collectors;
 import javax.validation.ValidationException;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.universum.common.exception.NotFoundException;
+import com.universum.security.util.AuthenticationConstant;
 import com.universum.service.label.domin.AvailableLanguage;
 import com.universum.service.label.dto.CreateLanguageRequest;
 import com.universum.service.label.dto.LanguageRequest;
@@ -34,7 +37,6 @@ public class LanguageService {
 	private static final String ALL_LANGUAGE_CACHE_NAME = "LANGUAGES_CACHE";
 	private static final String LANGUAGE_CACHE_NAME = "LANGUAGE_CACHE";
 	private static final String LANGUAGE_MESSAGE_CACHE_NAME = "LANGUAGE_MESSAGE_CACHE";
-	private static final String LANGUAGE_NOT_FOUND_MSG = "Language with code '%s' does not exists!";
 	
 	@Autowired
 	private AvailableLanguageRepository languageRepository;
@@ -49,49 +51,65 @@ public class LanguageService {
 	@Cacheable(value = LANGUAGE_CACHE_NAME, unless = "#result == null")
     public LanguageView findByCode(@NotNull final String langCode){
     	log.debug("Calling findByCode() for language code {}.", langCode);
-    	AvailableLanguage languageEntity = languageRepository.findByCode(langCode);
-    	if(languageEntity == null || languageEntity.getDeleted()) {
-    		throw new NotFoundException(String.format(LANGUAGE_NOT_FOUND_MSG, langCode));
-    	}
-        return LanguageView.fromEntity(languageEntity);
+        return LanguageView.fromEntity(Optional.of(this.findOneByCodeOrNotFound(langCode)));
     }
 	
 	@Caching(put = {@CachePut(value = LANGUAGE_CACHE_NAME, key = "#createRequest.code")},
-			evict = {@CacheEvict(value = ALL_LANGUAGE_CACHE_NAME, allEntries = true)})
+			evict = {@CacheEvict(value = ALL_LANGUAGE_CACHE_NAME, allEntries = true)
+	})
+	@PreAuthorize("hasAnyRole('" + AuthenticationConstant.SYSTEM_ADMIN + "', '" + AuthenticationConstant.SUPER_ADMIN + "')")
     public LanguageView addLanguage(@NotNull final CreateLanguageRequest createRequest){
     	log.debug("Adding new language with code {}.", createRequest.getCode());
-    	AvailableLanguage languageEntity = languageRepository.findByCode(createRequest.getCode());
-    	if(languageEntity != null && !languageEntity.getDeleted()) {
-    		throw new ValidationException(String.format("Language with code '%s' already exists!", createRequest.getCode()));
-    	}
-    	AvailableLanguage newLanguageEntity = languageRepository.save(convertToEntity(createRequest));
-        return LanguageView.fromEntity(newLanguageEntity);
+    	
+    	Optional.of(createRequest.getCode())
+				.map(languageRepository::countByCode)
+				.filter(count -> count >= 1)
+				.ifPresent(
+					count -> {
+						throw new ValidationException(String.format("Language with code '%s' already exists!", createRequest.getCode()));
+					}
+				);
+    	final AvailableLanguage newLanguageEntity = languageRepository.save(convertToEntity(createRequest));
+        return LanguageView.fromEntity(Optional.of(newLanguageEntity));
     }
 	
 	@Caching(evict = {
 			@CacheEvict(value = ALL_LANGUAGE_CACHE_NAME, allEntries = true),
-			@CacheEvict(value = LANGUAGE_CACHE_NAME, key = "#p0")})
+			@CacheEvict(value = LANGUAGE_CACHE_NAME, key = "#p0")
+	})
+	@PreAuthorize("hasAnyRole('" + AuthenticationConstant.SYSTEM_ADMIN + "', '" + AuthenticationConstant.SUPER_ADMIN + "')")
     public LanguageView updateLanguage(@NotNull final String langCode, @NotNull final LanguageRequest updateRequest){
     	log.debug("Updating language with code {}.", langCode);
-    	AvailableLanguage languageEntity = languageRepository.findByCode(langCode);
-    	if(languageEntity == null || languageEntity.getDeleted()) {
-    		throw new NotFoundException(String.format(LANGUAGE_NOT_FOUND_MSG, langCode));
-    	}
-    	AvailableLanguage updatedLanguageEntity = languageRepository.save(convertToEntity(updateRequest));
+    	
+    	Optional<AvailableLanguage> updatedLanguageEntity = Optional.of(this.findOneByCodeOrNotFound(langCode))
+    			.map(languageEntity -> {
+		    		languageEntity.setDir(LanguageDirection.valueOf(updateRequest.getDir()));
+		        	languageEntity.setIsDefault(updateRequest.getIsDefault());
+		        	languageEntity.setLabel(updateRequest.getLabel());
+		        	languageEntity = languageRepository.save(languageEntity);
+		        	log.debug("Changed Information for Language: {}", languageEntity);
+		    		return languageEntity;
+		    	});
     	return LanguageView.fromEntity(updatedLanguageEntity);
     }
 	
 	@Caching(evict = {
 			@CacheEvict(value = ALL_LANGUAGE_CACHE_NAME, allEntries = true),
-			@CacheEvict(value = LANGUAGE_CACHE_NAME, key = "#p0")})
-    public void deleteLanguage(@NotNull final String langCode){
+			@CacheEvict(value = LANGUAGE_CACHE_NAME, key = "#p0")
+	})
+	@PreAuthorize("hasAnyRole('" + AuthenticationConstant.SYSTEM_ADMIN + "', '" + AuthenticationConstant.SUPER_ADMIN + "')")
+    public LanguageView deleteLanguage(@NotNull final String langCode){
     	log.debug("Deleting language with code {}.", langCode);
-    	AvailableLanguage languageEntity = languageRepository.findByCode(langCode);
-    	if(languageEntity == null || languageEntity.getDeleted()) {
-    		throw new NotFoundException(String.format(LANGUAGE_NOT_FOUND_MSG, langCode));
-    	}
-    	languageRepository.deleteMessagesByLangCode(langCode);
-    	languageRepository.delete(languageEntity);
+    	
+    	Optional<AvailableLanguage> deletedLanguage = Optional.of(this.findOneByCodeOrNotFound(langCode))
+				.map(languageEntity -> {
+					languageEntity.setCode(String.format("_%s_%s", String.valueOf(languageEntity.getId()), languageEntity.getCode()));
+					languageEntity.setDeleted(Boolean.TRUE);
+					languageEntity = languageRepository.save(languageEntity);
+					log.debug("Deleted Language: {}", languageEntity);
+					return languageEntity;
+				});
+    	return LanguageView.fromEntity(deletedLanguage);
     }
     
 	@Cacheable(value = LANGUAGE_MESSAGE_CACHE_NAME, unless = "#result == null")
@@ -99,6 +117,28 @@ public class LanguageService {
 		log.debug("Finding all messages for language code {}.", langCode);
 		return languageRepository.findAllMessagesByLangCodeAsMap(langCode);
     }
+	
+	@CacheEvict(value = LANGUAGE_MESSAGE_CACHE_NAME)
+	@PreAuthorize("hasAnyRole('" + AuthenticationConstant.SYSTEM_ADMIN + "', '" + AuthenticationConstant.SUPER_ADMIN + "')")
+	public void deleteMessage(@NotNull final String langCode, @NotNull final String messageKey) {
+		log.debug("Deleting resource mesasge with key {} for language code {}.", messageKey, langCode);
+		this.languageRepository.deleteMessagesByLangCode(langCode, messageKey);
+	}
+	
+	@CacheEvict(value = LANGUAGE_MESSAGE_CACHE_NAME)
+	@PreAuthorize("hasAnyRole('" + AuthenticationConstant.SYSTEM_ADMIN + "', '" + AuthenticationConstant.SUPER_ADMIN + "')")
+	public void updateMessage(@NotNull final String langCode, @NotNull final String messageKey) {
+		log.debug("Updating resource mesasge with key {} for language code {}.", messageKey, langCode);
+		this.languageRepository.deleteMessagesByLangCode(langCode, messageKey);
+	}
+	
+	AvailableLanguage findOneByCodeOrNotFound(@NotNull final String langCode) {
+		Optional<AvailableLanguage> languageByCode = languageRepository.findByCode(langCode);
+		if(languageByCode.isEmpty() || BooleanUtils.isTrue(languageByCode.get().getDeleted())) {
+			throw new NotFoundException(AvailableLanguage.class, langCode);
+		}
+		return languageByCode.get();
+	}
     
     protected AvailableLanguage convertToEntity(@NotNull final LanguageRequest languageRequest) {
     	AvailableLanguage languageEntity = new AvailableLanguage();

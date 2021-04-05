@@ -1,18 +1,19 @@
 package com.universum.service.security.entity;
 
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalId;
@@ -30,7 +31,7 @@ import lombok.Setter;
 @Table(name = "app_role", uniqueConstraints = { @UniqueConstraint(columnNames = { "name" }) })
 @Audited
 @NaturalIdCache
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class ApplicationRole extends AbstractBaseEntity {
 	private static final long serialVersionUID = 6596348151274000268L;
 	@NaturalId
@@ -40,11 +41,13 @@ public class ApplicationRole extends AbstractBaseEntity {
     @Column(name = "is_system")
     private Boolean isSystem = Boolean.FALSE;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "app_role_permissions",
         joinColumns = {@JoinColumn(name = "role_id", referencedColumnName = "id")},
         inverseJoinColumns = {@JoinColumn(name = "permission_id", referencedColumnName = "id")})
-    private List<ApplicationPermission> permissions;
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @BatchSize(size = 20)
+    private Set<ApplicationPermission> permissions = new HashSet<>();
 
     @Override
     public boolean equals(Object o) {
