@@ -65,8 +65,8 @@ public class AvailableLanguageConroller {
     }
 	
 	@PostMapping("/{langCode}/messages")
-    public Map<String, String> createMessage(@PathVariable String langCode, @RequestBody @Valid ResourceMessage requestBody){
-		return languageService.findMessagesByLangCode(langCode);
+    public ResourceMessage createMessage(@PathVariable String langCode, @RequestBody @Valid ResourceMessage requestBody){
+		return null;
     }
 	
 	@DeleteMapping("/{langCode}/messages/{messageKey}")
