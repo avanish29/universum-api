@@ -1,0 +1,20 @@
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: label-service
+          uri: lb://label-service/{segment}
+          predicates:
+            - Path=/api/label-service/{segment}/**
+          filters:
+            - StripPrefix=2
+        
+        - id: security-service
+          uri: lb://security-service/{segment}
+          predicates:
+            - Path=/api/security-service/{segment}/**
+          filters:
+            - StripPrefix=2

@@ -1,0 +1,7 @@
+zuul:
+  routes:
+    security-service:
+      id: security-service
+      service-id: security-service
+      path: /api/security-service/**
+      strip-prefix: true
