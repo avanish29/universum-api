@@ -3,6 +3,8 @@ package com.universum.security.util;
 public final class AuthenticationConstant {
 	private AuthenticationConstant() {}
 	
+	public static final String SYSTEM_ACCOUNT = "SYSTEM";
+	
 	public static final String SUPER_ADMIN = "SUPER_ADMIN";
 	
 	public static final String SYSTEM_ADMIN = "SYSTEM_ADMIN";

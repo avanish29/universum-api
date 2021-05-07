@@ -12,6 +12,8 @@ spring:
     name: discovery-service
   jmx:
     enabled: false
+  profiles:
+    active: native
   main:
     allow-bean-definition-overriding: true
   task:
@@ -26,6 +28,10 @@ spring:
       pool:
         size: 2
   cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/shared
     loadbalancer:
       ribbon:
         enabled: false
@@ -116,8 +122,10 @@ eureka:
       git-commit: ${git.commit.id.abbrev:}
       git-branch: ${git.branch:}
       management.context-path: ${management.endpoints.web.base-path}
-  client:    enabled: true
-    healthcheck:      enabled: true
+  client:
+    enabled: true
+    healthcheck:
+      enabled: true
     fetch-registry: true
     register-with-eureka: true
     instance-info-replication-interval-seconds: 10
