@@ -110,7 +110,7 @@ services:
     command: sh -c "/app/scripts/waitforservices.sh ${CONFIGSERVER_SERVICE_NAME}:${CONFIGSERVER_PORT} -t 50 -- java -Djava.security.egd=file:/dev/./urandom -jar /app/service.jar"
   
   security-service:
-    build: ./universum-security-service
+    build: ./universum-auth-service
     networks: 
       - universum-network
     container_name: security-service
@@ -127,7 +127,7 @@ services:
     command: sh -c "/app/scripts/waitforservices.sh ${CONFIGSERVER_SERVICE_NAME}:${CONFIGSERVER_PORT} -t 50 -- java -Djava.security.egd=file:/dev/./urandom -jar /app/service.jar"
     
   label-service:
-    build: ./universum-label-service
+    build: ./universum-translation-service
     networks: 
       - universum-network
     container_name: label-service

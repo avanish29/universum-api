@@ -13,10 +13,10 @@ target
 /universum-common/*.factorypath
 /universum-common/*.project
 /universum-common/*.classpath
-/universum-security-service/*.factorypath
-/universum-security-service/*.project
-/universum-security-service/*.iml
-/universum-security-service/*.classpath
+/universum-auth-service/*.factorypath
+/universum-auth-service/*.project
+/universum-auth-service/*.iml
+/universum-auth-service/*.classpath
 /.settings
 /common-swagger/.settings
 /.project
