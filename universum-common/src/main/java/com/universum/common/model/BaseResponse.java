@@ -14,8 +14,10 @@ import lombok.experimental.SuperBuilder;
 public class BaseResponse {
 	private Long id;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-	private LocalDateTime created;
+	private LocalDateTime createdOn;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-	private LocalDateTime lastUpdate;
+	private LocalDateTime updatedOn;
+	private String createdBy;
+	private String updatedBy;
 	private String guid;
 }
