@@ -92,7 +92,7 @@ public class UserService implements UserDetailsService {
 	@Transactional(readOnly = true)
 	@PreAuthorize("hasAnyRole('" + AuthenticationConstant.SYSTEM_ADMIN + "', '" + AuthenticationConstant.SUPER_ADMIN + "')")
 	public UserResponse findUserById(@NonNull final Long id) {
-		return UserResponse.fromEntity(this.findOneWithRolesByIdOrNotFound(id), true);
+		return UserResponse.fromEntity(this.findByIdElseThrows(id), true);
 	}
 	
 	/**
@@ -143,7 +143,7 @@ public class UserService implements UserDetailsService {
 	 */
 	@PreAuthorize("hasAnyRole('" + AuthenticationConstant.SYSTEM_ADMIN + "', '" + AuthenticationConstant.SUPER_ADMIN + "')")
 	public UserResponse updateUser(@NonNull final Long userId, @NonNull final UpdateUserRequest updateRequest) {
-		Optional<User> updatedUser = Optional.of(this.findOneWithRolesByIdOrNotFound(userId))
+		Optional<User> updatedUser = Optional.of(this.findByIdElseThrows(userId))
 				.map(appUser -> {
 					appUser.setFirstName(updateRequest.getFirstName());
 					appUser.setLastName(updateRequest.getLastName());
@@ -170,7 +170,7 @@ public class UserService implements UserDetailsService {
 	 */
 	@PreAuthorize("hasAnyRole('" + AuthenticationConstant.SYSTEM_ADMIN + "', '" + AuthenticationConstant.SUPER_ADMIN + "')")
 	public UserResponse deleteUser(@NonNull final Long userId) {
-		Optional<User> deletedUser = Optional.of(this.findOneWithRolesByIdOrNotFound(userId))
+		Optional<User> deletedUser = Optional.of(this.findByIdElseThrows(userId))
 				.map(appUser -> {
 					appUser.setUsername(String.format("_%s_%s", userId, appUser.getUsername()));
 					appUser.setDeleted(Boolean.TRUE);
@@ -208,7 +208,7 @@ public class UserService implements UserDetailsService {
 	 * @param id - Id of the user.
 	 * @return - An instance of user {@link User}; will throw an exception {@link NotFoundException} if user with id does not exist.
 	 */
-	User findOneWithRolesByIdOrNotFound(final Long id) {
+	User findByIdElseThrows(final Long id) {
 		return userRepository.findOneWithRolesById(id).orElseThrow(() -> new NotFoundException(User.class, id));
 	}
 }

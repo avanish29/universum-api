@@ -27,6 +27,7 @@ import org.hibernate.Hibernate;
 
 import com.universum.common.domain.AuditingBaseModel;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -39,6 +40,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "permissions", uniqueConstraints = @UniqueConstraint(columnNames = {"name"}))
 @SequenceGenerator(sequenceName = Permission.PERMISSION_SEQUENCE_GENERATOR_NAME, name = Permission.PERMISSION_SEQUENCE_GENERATOR_NAME, allocationSize = 1)

@@ -14,10 +14,12 @@
 
 package com.universum.service.security.service.mapper;
 
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Context;
 import org.mapstruct.Mapper;
@@ -116,6 +118,7 @@ public interface UserMapper {
      * @return - Collection of role names.
      */
 	default Set<String> mapRolesToString(final Set<Role> roles) {
+		if(CollectionUtils.isEmpty(roles)) return Collections.emptySet();
 		return roles.stream().map(Role::getName).collect(Collectors.toSet());
 	}
 }

@@ -66,7 +66,7 @@ public class AuthenticationAuditListener {
 		return LocalDateTime.ofInstant(Instant.ofEpochMilli(timestamp), TimeZone.getDefault().toZoneId());
 	}
 
-	public static enum AuthenticationEventType {
+	public enum AuthenticationEventType {
 		AUTHENTICATION_SUCCESS,
 		AUTHENTICATION_FAILURE;
 	}

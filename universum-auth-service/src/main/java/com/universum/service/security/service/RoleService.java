@@ -64,7 +64,7 @@ public class RoleService {
 	 * @return a page of {@link RoleResponse}
 	 */
 	@Transactional(readOnly = true)
-	public PageSearchResponse<RoleResponse> findAllRoles(final PageSearchRequest pageSearchRequest) {
+	public PageSearchResponse<RoleResponse> findAllRoles(@NonNull final PageSearchRequest pageSearchRequest) {
 		log.info("Find all roles request {}", pageSearchRequest);
 		Page<Role> pageResult = roleRepository.findAll(pageSearchRequest.pageable());
 		PageSearchResponse<RoleResponse> pageSearchResponse = PageSearchResponse.of(pageResult, ROLE_ENTITY_TO_DTO_MAPPER);
@@ -79,7 +79,7 @@ public class RoleService {
 	 * @return - The instance of {@link RoleResponse} with the given id or {@literal NotFoundException} if none found.
 	 */
 	@Transactional(readOnly = true)
-	public RoleResponse findById(final Long id) {
+	public RoleResponse findById(@NonNull final Long id) {
 		return RoleResponse.fromEntity(findByIdElseThrows(id));
 	}
 	
@@ -90,12 +90,11 @@ public class RoleService {
 	 * @return - An instance of newly created user {@link RoleResponse}. Throw {@link ValidationException} if role with name is already present.
 	 */
 	public RoleResponse createRole(@NonNull final CreateRoleRequest roleRequest) {
-		if(roleRepository.countByNameIgnoreCase(roleRequest.getName()) > 0) {
-			throw new ValidationException(String.format("Role with name '%s' already exists!", roleRequest.getName()));
-		}
-		var appRole = ROLE_DTO_TO_ENTITY_MAPPER.apply(roleRequest);
-		appRole = roleRepository.save(appRole);
-		return RoleResponse.fromEntity(appRole);
+		return Optional.of(roleRepository.countByNameIgnoreCase(roleRequest.getName()))
+				.filter(count -> count <= 0)
+				.map(count -> roleRepository.save(ROLE_DTO_TO_ENTITY_MAPPER.apply(roleRequest)))
+				.map(ROLE_ENTITY_TO_DTO_MAPPER)
+				.orElseThrow(() -> new ValidationException(String.format("Role with name '%s' already exists!", roleRequest.getName())));
 	}
 	
 	/**
@@ -124,7 +123,7 @@ public class RoleService {
 	 * @param id - Id of the role.
 	 * @exception ValidationException if role has associated users.
 	 */
-	public void deleteRole(final Long id) {
+	public void deleteRole(@NonNull final Long id) {
 		var appRole = findByIdElseThrows(id);
 		if(BooleanUtils.isTrue(appRole.getIsSystem())) {
 			throw new ValidationException("Special roles can not be deleted!");
