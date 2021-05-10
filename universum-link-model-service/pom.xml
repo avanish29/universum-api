@@ -7,9 +7,7 @@
 		<groupId>com.universum</groupId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<!-- <groupId>com.universum</groupId> -->
 	<artifactId>universum-link-model-service</artifactId>
-	<!-- <version>0.0.1-SNAPSHOT</version> -->
 	<name>universum-link-model-service</name>
 	<description>All link entiity defination service</description>
 	<dependencies>

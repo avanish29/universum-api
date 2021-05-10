@@ -62,7 +62,6 @@
 		<dependency>
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			<!-- <version>${hibernate.validator.version}</version> -->
 		</dependency>
 		
 		<dependency>
@@ -82,7 +81,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<!-- <version>3.1.2</version> -->
 				<configuration>
 					<archive>
 						<addMavenDescriptor>false</addMavenDescriptor>

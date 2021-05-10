@@ -14,9 +14,11 @@
 
 package com.universum.service.security.service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.validation.ValidationException;
 
@@ -105,7 +107,7 @@ public class RoleService {
 	 * @return An instance of updated role {@link RoleResponse}; will throw an exception {@link NotFoundException} if role with id does not exist.
 	 */
 	public RoleResponse updateRole(@NonNull Long roleId, @NonNull UpdateRoleRequest updateRoleRequest) {
-		var appRole = Optional.of(findByIdElseThrows(roleId))
+		return Optional.of(findByIdElseThrows(roleId))
 				.filter(role -> BooleanUtils.isNotTrue(role.getIsSystem()))
 				.map(role -> {
 					role.setDescription(updateRoleRequest.getDescription());
@@ -113,27 +115,30 @@ public class RoleService {
 					log.debug("Changed Information for Role: {}", role);
 					return role;
 				})
+				.map(ROLE_ENTITY_TO_DTO_MAPPER)
 				.orElseThrow(() -> new ValidationException("Special roles can not be updated!"));	
-		return ROLE_ENTITY_TO_DTO_MAPPER.apply(appRole);
 	}
 	
 	/**
 	 * Soft delete role from database. One can not delete the role of type system.
 	 * 
 	 * @param id - Id of the role.
+	 * @return An instance of deleted role {@link RoleResponse}.
 	 * @exception ValidationException if role has associated users.
 	 */
-	public void deleteRole(@NonNull final Long id) {
-		var appRole = findByIdElseThrows(id);
-		if(BooleanUtils.isTrue(appRole.getIsSystem())) {
-			throw new ValidationException("Special roles can not be deleted!");
-		}
-		if(roleRepository.countUserByRoleId(appRole.getId()) > 0) {
-			throw new ValidationException("Role is being used and cannot be deleted!");
-		}
-		appRole.setName(String.format("_%s_%s", String.valueOf(appRole.getId()), appRole.getName()));
-		appRole.setDeleted(Boolean.TRUE);
-		roleRepository.save(appRole);
+	public RoleResponse deleteRole(@NonNull final Long id) {
+		return Optional.of(
+					Optional.of(findByIdElseThrows(id))
+							.filter(appRole -> BooleanUtils.isNotTrue(appRole.getIsSystem()))
+							.orElseThrow(() -> new ValidationException("Special roles can not be deleted!"))
+				).filter(appRole -> roleRepository.countUserByRoleId(appRole.getId()) <= 0)
+				.map(appRole -> {
+					appRole.setName(String.format("_%s_%s", String.valueOf(appRole.getId()), appRole.getName()));
+					appRole.setDeleted(Boolean.TRUE);
+					return roleRepository.save(appRole);
+				})
+				.map(ROLE_ENTITY_TO_DTO_MAPPER)
+				.orElseThrow(() -> new ValidationException("Role is being used and cannot be deleted!"));
 	}
 	
 	/**
@@ -141,10 +146,11 @@ public class RoleService {
 	 * 
 	 * @param ids - collection of role's Id.
 	 */
-	public void deleteRoles(final List<Long> ids) {
+	public List<RoleResponse> deleteRoles(final List<Long> ids) {
 		if(CollectionUtils.isNotEmpty(ids)) {
-			ids.stream().forEach(this::deleteRole);
+			return ids.stream().map(this::deleteRole).collect(Collectors.toList());
 		}
+		return Collections.emptyList();
 	}
 	
 	/**

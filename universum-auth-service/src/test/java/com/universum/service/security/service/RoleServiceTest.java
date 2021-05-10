@@ -23,6 +23,7 @@ import com.universum.common.exception.NotFoundException;
 import com.universum.service.security.domain.Permission;
 import com.universum.service.security.domain.Role;
 import com.universum.service.security.dto.request.CreateRoleRequest;
+import com.universum.service.security.dto.request.UpdateRoleRequest;
 import com.universum.service.security.dto.response.RoleResponse;
 import com.universum.service.security.repository.RoleRepository;
 
@@ -35,6 +36,7 @@ class RoleServiceTest {
     private RoleService roleService;
     
     // Test for roleService.findAllRoles() START
+    
     @Test
     void shouldReturnAllRoles() throws Exception {
     	List<Role> roles = mockRoles();
@@ -60,15 +62,16 @@ class RoleServiceTest {
     // Test for roleService.findAllRoles() END
     
     // Test for roleService.findById() START
+    
     @Test
     void shouldReturnResultfindById() throws Exception {
-    	Long userIdToLookFor = 1L;
+    	Long roleToUpdate = 1L;
     	List<Role> roles = mockRoles();
-    	Mockito.when(roleRepository.findById(userIdToLookFor)).thenReturn(roles.stream().filter(role -> userIdToLookFor.equals(role.getId())).findFirst());
+    	Mockito.when(roleRepository.findById(roleToUpdate)).thenReturn(roles.stream().filter(role -> roleToUpdate.equals(role.getId())).findFirst());
     	
-    	RoleResponse result = roleService.findById(userIdToLookFor);
+    	RoleResponse result = roleService.findById(roleToUpdate);
     	Assertions.assertNotNull(result);
-    	Assertions.assertEquals(userIdToLookFor, result.getId());
+    	Assertions.assertEquals(roleToUpdate, result.getId());
     	Assertions.assertEquals("SUPER_ADMIN", result.getName());
     	Assertions.assertEquals("Super Admin users has access to all tasks.", result.getDescription());
     	Assertions.assertEquals(Boolean.TRUE, result.getIsSystem());
@@ -76,11 +79,11 @@ class RoleServiceTest {
     
     @Test
     void shouldThrowExceptionWhenRoleByIdDoesNotExist() throws Exception {
-    	Long userIdToLookFor = 1L;
-    	Mockito.when(roleRepository.findById(userIdToLookFor)).thenReturn(Optional.empty());
+    	Long roleToUpdate = 1L;
+    	Mockito.when(roleRepository.findById(roleToUpdate)).thenReturn(Optional.empty());
     	
     	Assertions.assertThrows(NotFoundException.class, () -> {
-    		roleService.findById(userIdToLookFor);
+    		roleService.findById(roleToUpdate);
          }, "Entity Role with id 1 not found");
     }
     
@@ -90,9 +93,11 @@ class RoleServiceTest {
     		 roleService.findById(null);
          }, "id is marked non-null but is null");
     }
+    
     // Test for roleService.findById() END
     
     // Test for roleService.createRole() START
+    
     @Test
     void shouldCreateNewRole() throws Exception {
     	Role role = mockRole(6L, RoleType.ROLE_USER, "FINANCE", "Finance", Boolean.FALSE, null);
@@ -126,7 +131,128 @@ class RoleServiceTest {
    		 roleService.createRole(null);
         }, "roleRequest is marked non-null but is null");
     }
+    
     // Test for roleService.createRole() END
+    
+    // Test for roleService.updateRole() START
+    
+    @Test
+    void shouldUpdateRole() throws Exception {
+    	Role role = mockRole(6L, RoleType.ROLE_USER, "FINANCE", "Finance", Boolean.FALSE, null);
+    	Role updatedRole = mockRole(6L, RoleType.ROLE_USER, "FINANCE", "Updated Role Description.", Boolean.FALSE, null);
+    	
+    	Mockito.when(roleRepository.findById(role.getId())).thenReturn(Optional.of(role));
+    	Mockito.when(roleRepository.save(Mockito.any(Role.class))).thenReturn(updatedRole);
+    	
+    	RoleResponse result = roleService.updateRole(role.getId(), mockUpdateRequest(updatedRole.getDescription()));
+    	
+    	Assertions.assertNotNull(result);
+    	Assertions.assertEquals(role.getId(), result.getId());
+    	Assertions.assertEquals(role.getName(), result.getName());
+    	Assertions.assertEquals(role.getDescription(), result.getDescription());
+    	Assertions.assertEquals(role.getIsSystem(), result.getIsSystem());
+    }
+    
+    @Test
+    void shouldThrowExceptionWhenTryToUpdateSystemRole() throws Exception {
+    	Role role = mockRole(6L, RoleType.ROLE_ADMIN, "SUPER_ADMIN", "Super Admin users has access to all tasks.", Boolean.TRUE, null);
+    	UpdateRoleRequest updateRoleRequest = mockUpdateRequest("Test");
+    	
+    	Mockito.when(roleRepository.findById(role.getId())).thenReturn(Optional.of(role));
+    	
+    	Assertions.assertThrows(ValidationException.class, () -> {roleService.updateRole(6L, updateRoleRequest);}, "Special roles can not be updated!");
+    }
+    
+    @Test
+    void shouldThrowExceptionWhenRoleIdIsNullForUpdateRole() throws Exception {
+    	UpdateRoleRequest updateRoleRequest = mockUpdateRequest("Test");
+    	
+    	Assertions.assertThrows(IllegalArgumentException.class, () -> { roleService.updateRole(null, updateRoleRequest); }, "roleId is marked non-null but is null");
+    }
+    
+    @Test
+    void shouldThrowExceptionWhenUpdateRoleRequestIsNullForUpdateRole() throws Exception {
+    	Assertions.assertThrows(IllegalArgumentException.class, () -> { roleService.updateRole(6L, null); }, "updateRoleRequest is marked non-null but is null");
+    }
+    
+    // Test for roleService.updateRole() END
+    
+    // Test for roleService.deleteRole() START
+    
+    @Test
+    void shouldDeleteRole() throws Exception {
+    	Role role = mockRole(6L, RoleType.ROLE_USER, "FINANCE", "Finance", Boolean.FALSE, null);
+    	Role deletedRole = mockRole(6L, RoleType.ROLE_USER, "_6_FINANCE", "Finance", Boolean.FALSE, null);
+    	deletedRole.setDeleted(Boolean.TRUE);
+    	
+    	Mockito.when(roleRepository.findById(role.getId())).thenReturn(Optional.of(role));
+    	Mockito.when(roleRepository.countUserByRoleId(role.getId())).thenReturn(0);
+    	Mockito.when(roleRepository.save(Mockito.any(Role.class))).thenReturn(deletedRole);
+    	
+    	
+    	RoleResponse result = roleService.deleteRole(role.getId());
+    	
+    	Assertions.assertNotNull(result);
+    	Assertions.assertEquals(deletedRole.getId(), result.getId());
+    	Assertions.assertEquals(deletedRole.getName(), result.getName());
+    	Assertions.assertEquals(deletedRole.getDescription(), result.getDescription());
+    	Assertions.assertEquals(deletedRole.getIsSystem(), result.getIsSystem());
+    }
+    
+    @Test
+    void shouldThrowExceptionWhenRoleIdNullForDeleteRole() throws Exception {
+    	Assertions.assertThrows(IllegalArgumentException.class, () -> { roleService.deleteRole(null); }, "id is marked non-null but is null");
+    }
+    
+    @Test
+    void shouldThrowExceptionWhenTryToDeleteSystemRole() throws Exception {
+    	Role role = mockRole(6L, RoleType.ROLE_ADMIN, "SUPER_ADMIN", "Super Admin users has access to all tasks.", Boolean.TRUE, null);
+    	
+    	Mockito.when(roleRepository.findById(role.getId())).thenReturn(Optional.of(role));
+    	
+    	Assertions.assertThrows(ValidationException.class, () -> { roleService.deleteRole(6L); }, "Special roles can not be deleted!");
+    }
+    
+    @Test
+    void shouldThrowExceptionWhenRoleHasAssociatedUsers() throws Exception {
+    	Role role = mockRole(6L, RoleType.ROLE_USER, "FINANCE", "Finance", Boolean.FALSE, null);
+    	
+    	Mockito.when(roleRepository.findById(role.getId())).thenReturn(Optional.of(role));
+    	Mockito.when(roleRepository.countUserByRoleId(role.getId())).thenReturn(2);
+    	
+    	Assertions.assertThrows(ValidationException.class, () -> { roleService.deleteRole(6L); }, "Role is being used and cannot be deleted!");
+    }
+    
+    // Test for roleService.deleteRole() END
+    
+    // Test for roleService.deleteRoles() START
+    
+    @Test
+    void shouldDeleteAllRoles() throws Exception {
+    	Role role = mockRole(6L, RoleType.ROLE_USER, "FINANCE", "Finance", Boolean.FALSE, null);
+    	Role deletedRole = mockRole(6L, RoleType.ROLE_USER, "_6_FINANCE", "Finance", Boolean.FALSE, null);
+    	deletedRole.setDeleted(Boolean.TRUE);
+    	
+    	Mockito.when(roleRepository.findById(role.getId())).thenReturn(Optional.of(role));
+    	Mockito.when(roleRepository.countUserByRoleId(role.getId())).thenReturn(0);
+    	Mockito.when(roleRepository.save(Mockito.any(Role.class))).thenReturn(deletedRole);
+    	
+    	
+    	List<RoleResponse> result = roleService.deleteRoles(List.of(role.getId()));
+    	
+    	Assertions.assertNotNull(result);
+    	Assertions.assertEquals(1, result.size());
+    }
+    
+    @Test
+    void shouldReturnNullWhenDeleteWithEmptyCollection() throws Exception {
+    	List<RoleResponse> result = roleService.deleteRoles(List.of());
+    	
+    	Assertions.assertNotNull(result);
+    	Assertions.assertEquals(0, result.size());
+    }
+    
+    // Test for roleService.deleteRoles() END
     
     private List<Role> mockRoles() {
     	return List.of(
@@ -145,6 +271,7 @@ class RoleServiceTest {
     	role.setName(roleName);
     	role.setDescription(roleDescription);
     	role.setIsSystem(isSystem);
+    	role.setDeleted(Boolean.FALSE);
     	return role;
     }
     
@@ -156,4 +283,9 @@ class RoleServiceTest {
     	return createRequest;
     }
 
+    private UpdateRoleRequest mockUpdateRequest(final String roleDescription) {
+    	UpdateRoleRequest updateRoleRequest = new UpdateRoleRequest();
+    	updateRoleRequest.setDescription(roleDescription);
+    	return updateRoleRequest;
+    }
 }
