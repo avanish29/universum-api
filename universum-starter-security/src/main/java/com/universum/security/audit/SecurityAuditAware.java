@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.universum.security.util.AuthenticationConstant;
 
 public class SecurityAuditAware implements AuditorAware<String>{
+	public static final String SECURITY_AUDIT_AWARE = "securityAuditAware";
 
 	@Override
 	public Optional<String> getCurrentAuditor() {

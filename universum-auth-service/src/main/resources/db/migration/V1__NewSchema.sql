@@ -23,13 +23,13 @@ DROP SEQUENCE IF EXISTS role_sequence;
 DROP SEQUENCE IF EXISTS user_sequence;
 
 -- Create public.hibernate_sequence
-CREATE SEQUENCE IF NOT EXISTS hibernate_sequence START 1 INCREMENT 1;
+CREATE SEQUENCE IF NOT EXISTS hibernate_sequence START 100 INCREMENT 1;
 -- Create public.permission_sequence
-CREATE SEQUENCE IF NOT EXISTS permission_sequence START 1 INCREMENT 1;
+CREATE SEQUENCE IF NOT EXISTS permission_sequence START 100 INCREMENT 1;
 -- Create public.role_sequence
-CREATE SEQUENCE IF NOT EXISTS role_sequence START 1 INCREMENT 1;
+CREATE SEQUENCE IF NOT EXISTS role_sequence START 100 INCREMENT 1;
 -- Create public.user_sequence
-CREATE SEQUENCE IF NOT EXISTS user_sequence START 1 INCREMENT 1;
+CREATE SEQUENCE IF NOT EXISTS user_sequence START 100 INCREMENT 1;
 
 -- Create Extension: pgcrypto
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";

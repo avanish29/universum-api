@@ -1,13 +1,41 @@
+/**
+ * Copyright (c) 2021-present Universum Systems. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
 package com.universum.service.security.domain;
 
-import com.universum.common.jpa.domin.model.AuditingBaseModel;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
+
+import org.hibernate.Hibernate;
+
+import com.universum.common.domain.AuditingBaseModel;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.Hibernate;
 
-import javax.persistence.*;
-
+/**
+ * Represents a permission entity.
+ * 
+ * @author Avanish
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,7 +44,7 @@ import javax.persistence.*;
 @SequenceGenerator(sequenceName = Permission.PERMISSION_SEQUENCE_GENERATOR_NAME, name = Permission.PERMISSION_SEQUENCE_GENERATOR_NAME, allocationSize = 1)
 public class Permission extends AuditingBaseModel {
 	private static final long serialVersionUID = 1487227621155711682L;
-	
+		
 	public static final String PERMISSION_SEQUENCE_GENERATOR_NAME = "permission_sequence";
 	
 	public static final int NAME_MIN_LENGTH = 6;

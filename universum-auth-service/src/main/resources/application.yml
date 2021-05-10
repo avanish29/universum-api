@@ -141,7 +141,7 @@ eureka:
 
 logging:
   file:
-    name: ../logs/security-service.log
+    name: ..//logs//security-service.log
     
 # ===================================================================
 # Application specific properties

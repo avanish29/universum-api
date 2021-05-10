@@ -1,12 +1,11 @@
 package com.universum.common.exception.handler;
 
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.ValidationException;
-
+import com.universum.common.dto.response.APIError;
+import com.universum.common.dto.response.APIValidationError;
+import com.universum.common.exception.NotFoundException;
+import com.universum.common.exception.UniversumAPIException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -28,15 +27,11 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.universum.common.exception.NotFoundException;
-import com.universum.common.exception.UniversumAPIException;
-import com.universum.common.model.UniversumAPIError;
-import com.universum.common.model.UniversumAPIValidationError;
-
-import lombok.extern.slf4j.Slf4j;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.ValidationException;
+import java.util.Set;
 
 @Configuration
-@Order(1000)
 @ControllerAdvice
 @Component
 @Slf4j
@@ -46,7 +41,7 @@ public class UniversumAPIExceptionHandler extends ResponseEntityExceptionHandler
 	@Override
     protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String error = ex.getParameterName() + " parameter is missing";
-        return buildResponseEntity(new UniversumAPIError(HttpStatus.BAD_REQUEST, error, ex));
+        return buildResponseEntity(new APIError(HttpStatus.BAD_REQUEST, error, ex));
     }
 	
 	@Override
@@ -55,12 +50,12 @@ public class UniversumAPIExceptionHandler extends ResponseEntityExceptionHandler
         builder.append(ex.getContentType());
         builder.append(" media type is not supported. Supported media types are ");
         ex.getSupportedMediaTypes().forEach(t -> builder.append(t).append(", "));
-        return buildResponseEntity(new UniversumAPIError(HttpStatus.UNSUPPORTED_MEDIA_TYPE, builder.substring(0, builder.length() - 2), ex));
+        return buildResponseEntity(new APIError(HttpStatus.UNSUPPORTED_MEDIA_TYPE, builder.substring(0, builder.length() - 2), ex));
     }
 	
 	@Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-		UniversumAPIValidationError apiError = new UniversumAPIValidationError(HttpStatus.BAD_REQUEST);
+		APIValidationError apiError = new APIValidationError(HttpStatus.BAD_REQUEST);
         apiError.setMessage(VALIDATION_ERROR_MSG);
         apiError.addValidationErrors(ex.getBindingResult().getFieldErrors());
         apiError.addValidationError(ex.getBindingResult().getGlobalErrors());
@@ -74,7 +69,7 @@ public class UniversumAPIExceptionHandler extends ResponseEntityExceptionHandler
 		if (!CollectionUtils.isEmpty(supportedMethods)) {
 			headers.setAllow(supportedMethods);
 		}
-		return buildResponseEntity(new UniversumAPIError(HttpStatus.METHOD_NOT_ALLOWED, ex.getMessage(), ex.getCause()));
+		return buildResponseEntity(new APIError(HttpStatus.METHOD_NOT_ALLOWED, ex.getMessage(), ex.getCause()));
 	}
 	
 	@Override
@@ -82,18 +77,18 @@ public class UniversumAPIExceptionHandler extends ResponseEntityExceptionHandler
         ServletWebRequest servletWebRequest = (ServletWebRequest) request;
         log.info("{} to {}", servletWebRequest.getHttpMethod(), servletWebRequest.getRequest().getServletPath());
         String error = "Malformed JSON request";
-        return buildResponseEntity(new UniversumAPIValidationError(HttpStatus.BAD_REQUEST, error, ex));
+        return buildResponseEntity(new APIValidationError(HttpStatus.BAD_REQUEST, error, ex));
     }
 	
 	@Override
     protected ResponseEntity<Object> handleHttpMessageNotWritable(HttpMessageNotWritableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String error = "Error writing JSON output";
-        return buildResponseEntity(new UniversumAPIValidationError(HttpStatus.INTERNAL_SERVER_ERROR, error, ex));
+        return buildResponseEntity(new APIValidationError(HttpStatus.INTERNAL_SERVER_ERROR, error, ex));
     }
 	
 	@Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-		UniversumAPIValidationError apiError = new UniversumAPIValidationError(HttpStatus.BAD_REQUEST);
+		APIValidationError apiError = new APIValidationError(HttpStatus.BAD_REQUEST);
         apiError.setMessage(String.format("Could not find the %s method for URL %s", ex.getHttpMethod(), ex.getRequestURL()));
         apiError.setDebugMessage(ex.getMessage());
         return buildResponseEntity(apiError);
@@ -101,7 +96,7 @@ public class UniversumAPIExceptionHandler extends ResponseEntityExceptionHandler
 	
 	@Override
 	protected ResponseEntity<Object> handleBindException(BindException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-		UniversumAPIValidationError apiError = new UniversumAPIValidationError(HttpStatus.BAD_REQUEST);
+		APIValidationError apiError = new APIValidationError(HttpStatus.BAD_REQUEST);
         apiError.setMessage(VALIDATION_ERROR_MSG);
         apiError.addValidationErrors(ex.getFieldErrors());
 		return buildResponseEntity(apiError);
@@ -109,7 +104,7 @@ public class UniversumAPIExceptionHandler extends ResponseEntityExceptionHandler
 
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
 	protected ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException ex, WebRequest request) {
-		UniversumAPIError apiError = new UniversumAPIError(HttpStatus.BAD_REQUEST);
+		APIError apiError = new APIError(HttpStatus.BAD_REQUEST);
 		apiError.setMessage(String.format("The parameter '%s' of value '%s' could not be converted to type '%s'", ex.getName(), ex.getValue(), ex.getRequiredType()));
 		apiError.setDebugMessage(ex.getMessage());
 		return buildResponseEntity(apiError);
@@ -118,19 +113,22 @@ public class UniversumAPIExceptionHandler extends ResponseEntityExceptionHandler
 	@ExceptionHandler(Exception.class)
 	protected ResponseEntity<Object> handleException(Exception ex) {
 		log.error("An error occurred while performing operation", ex);
-		UniversumAPIError apiError = new UniversumAPIError(HttpStatus.INTERNAL_SERVER_ERROR);
+		APIError apiError = new APIError(HttpStatus.INTERNAL_SERVER_ERROR);
+		if("org.springframework.security.access.AccessDeniedException".equalsIgnoreCase(ex.getClass().getName())) {
+			apiError = new APIError(HttpStatus.FORBIDDEN);
+		}
 		apiError.setMessage(ex.getMessage());
 		return buildResponseEntity(apiError);
 	}
 	
 	@ExceptionHandler(UniversumAPIException.class)
 	protected ResponseEntity<Object> handleApiException(UniversumAPIException apiEx) {
-		return buildResponseEntity(new UniversumAPIError(apiEx.getStatus(), apiEx.getMessage(), apiEx.getCause()));
+		return buildResponseEntity(new APIError(apiEx.getStatus(), apiEx.getMessage(), apiEx.getCause()));
 	}
 	
 	@ExceptionHandler(javax.validation.ConstraintViolationException.class)
     protected ResponseEntity<Object> handleConstraintViolation(javax.validation.ConstraintViolationException ex) {
-        UniversumAPIValidationError apiError = new UniversumAPIValidationError(HttpStatus.BAD_REQUEST);
+        APIValidationError apiError = new APIValidationError(HttpStatus.BAD_REQUEST);
         apiError.setMessage(VALIDATION_ERROR_MSG);
         apiError.addValidationErrors(ex.getConstraintViolations());
         return buildResponseEntity(apiError);
@@ -139,19 +137,19 @@ public class UniversumAPIExceptionHandler extends ResponseEntityExceptionHandler
 	@ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> handleNotFoundException(HttpServletRequest request, NotFoundException ex) {
 		log.error("NotFoundException {} \n", request.getRequestURI(), ex);
-		UniversumAPIError apiError = new UniversumAPIError(HttpStatus.NOT_FOUND);
+		APIError apiError = new APIError(HttpStatus.NOT_FOUND);
 		apiError.setMessage(ex.getMessage());
         return buildResponseEntity(apiError);
     }
 	
 	@ExceptionHandler(ValidationException.class)
 	protected ResponseEntity<Object> handleValidationException(ValidationException ex) {
-		UniversumAPIError apiError = new UniversumAPIError(HttpStatus.BAD_REQUEST);
+		APIError apiError = new APIError(HttpStatus.BAD_REQUEST);
         apiError.setMessage(ex.getMessage());
 		return buildResponseEntity(apiError);
 	}
-	
-	private ResponseEntity<Object> buildResponseEntity(final UniversumAPIError apiError) {
+
+	private ResponseEntity<Object> buildResponseEntity(final APIError apiError) {
 		return new ResponseEntity<>(apiError, apiError.getStatus());
 	}
 }

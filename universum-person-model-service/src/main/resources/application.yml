@@ -1,0 +1,153 @@
+# ===================================================================
+# Standard Spring Boot properties.
+# Full reference is available at:
+# http://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html
+# ===================================================================
+
+server:
+  port: ${SECURITY_SERVICE_PORT:0}
+
+spring:
+  application:
+    name: security-service
+  jmx:
+    enabled: false
+  main:
+    allow-bean-definition-overriding: true
+  task:
+    execution:
+      thread-name-prefix: universum-security-task-
+      pool:
+        core-size: 2
+        max-size: 50
+        queue-capacity: 10000
+    scheduling:
+      thread-name-prefix: universum-security-scheduling-
+      pool:
+        size: 2
+  cloud:
+    loadbalancer:
+      ribbon:
+        enabled: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/universumsec
+    username: root
+    password: root
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL82Dialect
+    show-sql: true
+  flyway:
+    enabled: true
+    validate-on-migrate: false
+    baseline-on-migrate: true
+    table: schema_version
+
+ribbon:
+  eureka:
+    enabled: true
+
+# ================================================================================================================================================================================================
+# Actuator configuration (management.*)
+#
+# Full list of properties with default values at:
+# https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-application-properties.html#common-application-properties-actuator
+# ================================================================================================================================================================================================
+
+management:
+  endpoints:
+    web:
+      base-path: /management
+      exposure:
+        include: ['configprops', 'env', 'health', 'info', 'logfile', 'loggers', 'threaddump']
+  endpoint:
+    health:
+      show-details: WHEN_AUTHORIZED
+      roles: ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN']
+  info:
+    git:
+      mode: full
+  health:
+    mail:
+      enabled: false # When using the MailService, configure an SMTP server and set this to true
+  metrics:
+    enable:
+      http: true
+      jvm: true
+      logback: true
+      process: true
+      system: true
+    distribution:
+      percentiles-histogram:
+        all: true
+      percentiles:
+        all: 0, 0.5, 0.75, 0.95, 0.99, 1.0
+    tags:
+      application: ${spring.application.name}
+    web:
+      server:
+        request:
+          autotime:
+            enabled: true
+
+
+# ================================================================================================================================================================================================
+# Eureka server configuration (eureka.server.*)
+#
+# Full list of properties with default values at:
+# https://github.com/spring-cloud/spring-cloud-netflix/blob/master/spring-cloud-netflix-eureka-server/src/main/java/org/springframework/cloud/netflix/eureka/server/EurekaServerConfigBean.java
+#
+# Documentation at:
+# https://github.com/Netflix/eureka/blob/master/eureka-core/src/main/java/com/netflix/eureka/EurekaServerConfig.java
+# ================================================================================================================================================================================================
+
+eureka:
+  instance:
+    appname: ${spring.application.name}
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.application.instance-id:${random.value}}
+    lease-renewal-interval-in-seconds: 5
+    lease-expiration-duration-in-seconds: 10
+    status-page-url-path: ${management.endpoints.web.base-path}/info
+    health-check-url-path: ${management.endpoints.web.base-path}/health
+    metadata-map:
+      zone: primary # This is needed for the load balancer
+      profile: ${spring.profiles.active}
+      version: #project.version#
+      git-version: ${git.commit.id.describe:}
+      git-commit: ${git.commit.id.abbrev:}
+      git-branch: ${git.branch:}
+      management.context-path: ${management.endpoints.web.base-path}
+  client:
+    enabled: true
+    healthcheck:
+      enabled: true
+    fetch-registry: true
+    register-with-eureka: true
+    instance-info-replication-interval-seconds: 10
+    registry-fetch-interval-seconds: 10
+    service-url:
+      defaultZone: http://${REGISTRY_SERVER_IP:localhost}:${REGISTRY_SERVER_PORT:8761}/eureka/
+
+# ================================================================================================================================================================================================
+# Logging configuration (logging.*)
+#
+# Full list of properties with default values at:
+# https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-application-properties.html
+# ================================================================================================================================================================================================
+
+logging:
+  file:
+    name: ../logs/security-service.log
+    
+# ===================================================================
+# Application specific properties
+# ===================================================================
+universum:
+  security:
+    authentication:
+      jwt:
+        secret: JDJ5JDEwJEdCSVFhZjZnRWVVOWltOFJUS2hJZ09aNXE1aGFEQS5BNUd6b2NTcjVDUi5zVThPVXNDVXdxasTARSIHNXDkDLWPSKAGXFSYBC

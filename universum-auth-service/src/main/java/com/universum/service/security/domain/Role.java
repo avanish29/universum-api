@@ -1,3 +1,17 @@
+/**
+ * Copyright (c) 2021-present Universum Systems. All rights reserved.
+ *
+ * This library is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU Lesser General Public License as published by the Free
+ * Software Foundation; either version 2.1 of the License, or (at your option)
+ * any later version.
+ *
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
+ */
+
 package com.universum.service.security.domain;
 
 import java.util.HashSet;
@@ -26,13 +40,18 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.annotations.Where;
 
-import com.universum.common.jpa.domin.enums.RoleType;
-import com.universum.common.jpa.domin.model.AuditingBaseModel;
+import com.universum.common.enums.RoleType;
+import com.universum.common.domain.AuditingBaseModel;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * Represents a role entity.
+ * 
+ * @author Avanish
+ */
 @Getter
 @Setter
 @NoArgsConstructor
@@ -71,7 +90,7 @@ public class Role extends AuditingBaseModel {
         inverseJoinColumns = {@JoinColumn(name = "permission_id", referencedColumnName = "id", nullable = false, updatable = false)})
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @BatchSize(size = 20)
-    private Set<Permission> permissions = new HashSet<>();
+    private transient Set<Permission> permissions = new HashSet<>();
 
     @Override
     public String toString() {

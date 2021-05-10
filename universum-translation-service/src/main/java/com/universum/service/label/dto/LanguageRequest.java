@@ -13,7 +13,7 @@ import lombok.Data;
 public class LanguageRequest implements Serializable {
 	private static final long serialVersionUID = 1061456791228308281L;
 
-	@ValidEnum(enumClass = LanguageDirection.class, message = "Language direction must be either LTR ot RTL.")
+	@ValidEnum(enumClass = LanguageDirection.class, message = "Language direction must be either 'LTR' or 'RTL'.")
 	private String dir;
 	
 	private Boolean isDefault = Boolean.FALSE;

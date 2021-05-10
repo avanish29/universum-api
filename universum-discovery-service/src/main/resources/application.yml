@@ -12,8 +12,6 @@ spring:
     name: discovery-service
   jmx:
     enabled: false
-  profiles:
-    active: native
   main:
     allow-bean-definition-overriding: true
   task:
@@ -28,10 +26,6 @@ spring:
       pool:
         size: 2
   cloud:
-    config:
-      server:
-        native:
-          search-locations: classpath:/shared
     loadbalancer:
       ribbon:
         enabled: false

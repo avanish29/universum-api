@@ -7,10 +7,16 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.universum.common.jpa.domin.AbstractBaseEntity;
+import org.hibernate.annotations.Where;
+
+import com.universum.common.domain.AuditingBaseModel;
 import com.universum.service.label.util.LanguageDirection;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,8 +31,15 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class AvailableLanguage extends AbstractBaseEntity {
+@Where(clause = "deleted is NULL or deleted != true")
+public class AvailableLanguage extends AuditingBaseModel {
 	private static final long serialVersionUID = 510614895831100389L;
+	
+	
+	@Id
+    @Column(unique = true)
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    protected Long id;
 	
 	@Column(unique=true, nullable=false, length = 36)
 	private String code;

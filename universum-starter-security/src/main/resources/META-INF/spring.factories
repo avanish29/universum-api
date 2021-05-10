@@ -1,4 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 com.universum.security.jwt.config.JWTSecurityConfig,\
-com.universum.security.audit.config.AuditConfiguration,\
-com.universum.security.util.UniversumSecurityExceptionHandler
+com.universum.security.audit.config.JpaAuditingConfiguration

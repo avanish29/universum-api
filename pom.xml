@@ -7,7 +7,6 @@
 	<modules>
 		<module>universum-common</module>
 		<module>universum-common-swagger</module>
-		<module>universum-common-jpa</module>
 		<module>universum-starter-security</module>
 		<module>universum-starter-jackson</module>
 		<module>universum-api-gateway</module>
@@ -42,10 +41,12 @@
 		<apache.commons-collections4.version>4.4</apache.commons-collections4.version>
 		<spring-cloud.version>Hoxton.SR8</spring-cloud.version>
 		<spring-boot-admin.version>2.3.1</spring-boot-admin.version>
-		<lombok.version>1.18.12</lombok.version>
+		<lombok.version>1.18.16</lombok.version>
 		<jsonwebtoken.jjwt-jackson.version>0.11.2</jsonwebtoken.jjwt-jackson.version>
 		<jsonwebtoken.jjwt-api.version>0.11.2</jsonwebtoken.jjwt-api.version>
 		<jsonwebtoken.jjwt-impl.version>0.11.2</jsonwebtoken.jjwt-impl.version>
+		<org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
+		<lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
 		<sonar.projectKey>avanish29_universum-api</sonar.projectKey>
 		<sonar.organization>avanish29</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>

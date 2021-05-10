@@ -12,7 +12,7 @@
 
 logging:
   level:
-    ROOT: INFO
+    ROOT: DEBUG
 
 spring:
   profiles:

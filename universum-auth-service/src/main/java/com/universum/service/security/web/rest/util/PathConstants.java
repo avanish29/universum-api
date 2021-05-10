@@ -1,5 +1,10 @@
 package com.universum.service.security.web.rest.util;
 
+/**
+ * Utility for rest paths. 
+ *  
+ * @author Avanish
+ */
 public final class PathConstants {
     private PathConstants() {
         throw new AssertionError("Can't create instance !");
