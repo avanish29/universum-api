@@ -1,11 +1,9 @@
 package com.universum.service.security.web.rest;
 
-import com.universum.common.dto.request.PageSearchRequest;
-import com.universum.common.dto.response.PageSearchResponse;
-import com.universum.security.jwt.JWTTokenProvider;
-import com.universum.service.security.dto.response.UserResponse;
-import com.universum.service.security.service.UserService;
-import com.universum.service.security.web.rest.util.PathConstants;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -13,9 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
@@ -24,17 +19,17 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
+import com.universum.common.dto.request.PageSearchRequest;
+import com.universum.common.dto.response.PageSearchResponse;
+import com.universum.service.security.dto.response.UserResponse;
+import com.universum.service.security.service.UserService;
+import com.universum.service.security.web.rest.util.PathConstants;
 
 @WebMvcTest(UserController.class)
 @TestPropertySource(locations = "classpath:application.properties")
 class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
-
-	private JWTTokenProvider jwtTokenProvider;
 
     @MockBean
     private UserService userService;

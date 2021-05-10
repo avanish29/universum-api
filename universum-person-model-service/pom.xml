@@ -43,12 +43,6 @@
 			<artifactId>universum-starter-security</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
-		<dependency>
-			<groupId>com.universum</groupId>
-			<artifactId>universum-common-jpa</artifactId>
-			<version>${project.version}</version>
-		</dependency>
 	</dependencies>
 	
 	<build>

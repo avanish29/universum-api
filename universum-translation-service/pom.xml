@@ -52,12 +52,6 @@
             <artifactId>flyway-core</artifactId>
         </dependency>
         
-        <dependency>
-			<groupId>com.universum</groupId>
-			<artifactId>universum-common-jpa</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-		
 		<dependency>
 			<groupId>com.universum</groupId>
 			<artifactId>universum-common-swagger</artifactId>

@@ -1,10 +1,7 @@
 package com.universum.service.security.service;
 
-import com.universum.common.dto.request.PageSearchRequest;
-import com.universum.common.dto.response.PageSearchResponse;
-import com.universum.service.security.domain.User;
-import com.universum.service.security.dto.response.UserResponse;
-import com.universum.service.security.repository.UserRepository;
+import java.util.List;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,10 +10,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.List;
+import com.universum.common.dto.request.PageSearchRequest;
+import com.universum.common.dto.response.PageSearchResponse;
+import com.universum.service.security.domain.User;
+import com.universum.service.security.dto.response.UserResponse;
+import com.universum.service.security.repository.UserRepository;
 
 @ExtendWith(SpringExtension.class)
 class UserServiceTest {
