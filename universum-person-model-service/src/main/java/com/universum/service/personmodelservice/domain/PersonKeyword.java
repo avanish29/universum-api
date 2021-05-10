@@ -26,7 +26,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "cfperskeyw", uniqueConstraints = @UniqueConstraint(columnNames = {"cfPersId","cfLangCode","cfTrans"}))
+@Table(name = "cfperskeyw", uniqueConstraints = @UniqueConstraint(columnNames = {"cf_persid","cf_langcode","cf_trans"}))
 @Where(clause = "deleted is NULL or deleted != true")
 @SequenceGenerator(name = PersonKeyword.PERSON_KEYWORD_SEQUENCE_GENERATOR_NAME, sequenceName = PersonKeyword.PERSON_KEYWORD_SEQUENCE_GENERATOR_NAME, allocationSize = 1)
 public class PersonKeyword extends CerifMultipleLingualModel {

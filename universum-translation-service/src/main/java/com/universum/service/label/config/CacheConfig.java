@@ -12,7 +12,7 @@ import com.hazelcast.spring.cache.HazelcastCacheManager;
 public class CacheConfig {
 	@Bean
 	public CacheManager cacheManager() {
-		ClientConfig clientConfig = new ClientConfig();
+		var clientConfig = new ClientConfig();
 		clientConfig.getNetworkConfig().addAddress("localhost:5701");
 		return new HazelcastCacheManager(HazelcastClient.newHazelcastClient(clientConfig));
 	}

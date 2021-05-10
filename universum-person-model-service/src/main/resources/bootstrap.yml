@@ -1,6 +1,6 @@
 spring:
   application:
-    name: security-service
+    name: person-service
   cloud:
     config:
       discovery:
