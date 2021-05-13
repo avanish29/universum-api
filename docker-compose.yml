@@ -1,24 +1,28 @@
 version: '3.8'
+
 networks: 
   universum-network:
+    
 volumes:
   universum-database-data:
+  universum-rabbitmq-data:
+ 
+# Service definations  
 services:
+  # Hazelcast cache
   hazelcast:
-    image: hazelcast/hazelcast:4.1.1
-    networks: 
-      - universum-network
     container_name: hazelcast
+    image: hazelcast/hazelcast:4.1.1
     expose: 
       - 5701
     ports:
       - 5701:5701
-        
-  postgesdb:
-    build: ./postgres
     networks: 
       - universum-network
+  # Postgres data base      
+  postgesdb:
     container_name: postgesdb
+    build: ./postgres
     volumes: 
       - universum-database-data:/var/lib/postgresql/data
     expose: 
@@ -30,115 +34,133 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - DATABASES_PER_SERVICE=securityservice,unisec,unisecroot:i18service,uniintl,uniintlroot
     restart: unless-stopped
+    networks: 
+      - universum-network
+  # Rabbit MQ MOM  
+  rabbit-mq:
+    container_name: rabbit-mq
+    image: rabbitmq:3-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+    volumes:
+        - "universum-rabbitmq-data:/var/lib/rabbitmq/mnesia/"
+    ports:
+        - 5672:5672
+        - 15672:15672
+    networks:
+        - universum-network
+    logging:
+      driver: json-file
 
-  discovery-service:
-    build: ./universum-discovery-service
-    networks: 
-      - universum-network
-    container_name: discovery-service
-    volumes:
-      - ${PWD}/logs:/app/logs/
-    expose:
-      - 8761
-    ports:
-      - 8761:8761
-    restart: unless-stopped
-    depends_on:
-      - postgesdb
-    links:
-      - postgesdb
-    command: sh -c "/app/scripts/waitforservices.sh ${POSTGRES_SERVICE_NAME}:${POSTGRES_PORT} -t 50 -- java -Djava.security.egd=file:/dev/./urandom -jar /app/service.jar"
+# discovery-service:
+#    build: ./universum-discovery-service
+#    networks: 
+#      - universum-network
+#    container_name: discovery-service
+#    volumes:
+#      - ${PWD}/logs:/app/logs/
+#    expose:
+#      - 8761
+#    ports:
+#      - 8761:8761
+#    restart: unless-stopped
+#    depends_on:
+#      - postgesdb
+#    links:
+#      - postgesdb
+#    command: sh -c "/app/scripts/waitforservices.sh ${POSTGRES_SERVICE_NAME}:${POSTGRES_PORT} -t 50 -- java -Djava.security.egd=file:/dev/./urandom -jar /app/service.jar"
       
-  config-service:
-    build: ./universum-config-service
-    networks: 
-      - universum-network
-    container_name: config-service
-    volumes:
-      - ${PWD}/logs:/app/logs/
-    expose:
-      - 8011
-    ports:
-      - 8011:8011
-    environment:
-      - eureka.client.serviceUrl.defaultZone=http://${DISCOVERY_SERVICE_NAME}:${DISCOVERY_PORT}/eureka/
-    restart: unless-stopped
-    depends_on:
-      - discovery-service
-    links:
-      - discovery-service
-    command: sh -c "/app/scripts/waitforservices.sh ${DISCOVERY_SERVICE_NAME}:${DISCOVERY_PORT} -t 50 -- java -Djava.security.egd=file:/dev/./urandom -jar /app/service.jar"
+#  config-service:
+#    build: ./universum-config-service
+#    networks: 
+#      - universum-network
+#    container_name: config-service
+#    volumes:
+#      - ${PWD}/logs:/app/logs/
+#    expose:
+#      - 8011
+#    ports:
+#      - 8011:8011
+#    environment:
+#      - eureka.client.serviceUrl.defaultZone=http://${DISCOVERY_SERVICE_NAME}:${DISCOVERY_PORT}/eureka/
+#    restart: unless-stopped
+#    depends_on:
+#      - discovery-service
+#    links:
+#      - discovery-service
+#    command: sh -c "/app/scripts/waitforservices.sh ${DISCOVERY_SERVICE_NAME}:${DISCOVERY_PORT} -t 50 -- java -Djava.security.egd=file:/dev/./urandom -jar /app/service.jar"
     
-  gateway-service:
-    build: ./universum-api-gateway
-    networks: 
-      - universum-network
-    container_name: gateway-service
-    volumes:
-      - ${PWD}/log:/app/logs/
-    expose:
-      - 8080
-    ports:
-      - 8080:8080
-    environment:
-      - eureka.client.serviceUrl.defaultZone=http://${DISCOVERY_SERVICE_NAME}:${DISCOVERY_PORT}/eureka/
-    restart: unless-stopped
-    depends_on:
-      - config-service
-    links:
-      - config-service
-    command: sh -c "/app/scripts/waitforservices.sh ${CONFIGSERVER_SERVICE_NAME}:${CONFIGSERVER_PORT} -t 50 -- java -Djava.security.egd=file:/dev/./urandom -jar /app/service.jar"
+#  gateway-service:
+#    build: ./universum-api-gateway
+#    networks: 
+#      - universum-network
+#    container_name: gateway-service
+#    volumes:
+#      - ${PWD}/log:/app/logs/
+#    expose:
+#      - 8080
+#    ports:
+#      - 8080:8080
+#    environment:
+#      - eureka.client.serviceUrl.defaultZone=http://${DISCOVERY_SERVICE_NAME}:${DISCOVERY_PORT}/eureka/
+#    restart: unless-stopped
+#    depends_on:
+#      - config-service
+#    links:
+#      - config-service
+#    command: sh -c "/app/scripts/waitforservices.sh ${CONFIGSERVER_SERVICE_NAME}:${CONFIGSERVER_PORT} -t 50 -- java -Djava.security.egd=file:/dev/./urandom -jar /app/service.jar"
   
-  zuul-gateway-service:
-    build: ./universum-zuul-api-gateway
-    networks: 
-      - universum-network
-    container_name: zuul-gateway-service
-    volumes:
-      - ${PWD}/log:/app/logs/
-    expose:
-      - 9090
-    ports:
-      - 9090:9090
-    environment:
-      - eureka.client.serviceUrl.defaultZone=http://${DISCOVERY_SERVICE_NAME}:${DISCOVERY_PORT}/eureka/
-    restart: unless-stopped
-    depends_on:
-      - config-service
-    links:
-      - config-service
-    command: sh -c "/app/scripts/waitforservices.sh ${CONFIGSERVER_SERVICE_NAME}:${CONFIGSERVER_PORT} -t 50 -- java -Djava.security.egd=file:/dev/./urandom -jar /app/service.jar"
+#  zuul-gateway-service:
+#    build: ./universum-zuul-api-gateway
+#    networks: 
+#      - universum-network
+#    container_name: zuul-gateway-service
+#    volumes:
+#      - ${PWD}/log:/app/logs/
+#    expose:
+#      - 9090
+#    ports:
+#      - 9090:9090
+#    environment:
+#      - eureka.client.serviceUrl.defaultZone=http://${DISCOVERY_SERVICE_NAME}:${DISCOVERY_PORT}/eureka/
+#    restart: unless-stopped
+#    depends_on:
+#      - config-service
+#    links:
+#      - config-service
+#    command: sh -c "/app/scripts/waitforservices.sh ${CONFIGSERVER_SERVICE_NAME}:${CONFIGSERVER_PORT} -t 50 -- java -Djava.security.egd=file:/dev/./urandom -jar /app/service.jar"
   
-  security-service:
-    build: ./universum-auth-service
-    networks: 
-      - universum-network
-    container_name: security-service
-    volumes:
-      - ${PWD}/log:/app/logs/
-    environment:
-      - eureka.client.serviceUrl.defaultZone=http://${DISCOVERY_SERVICE_NAME}:${DISCOVERY_PORT}/eureka/
-      - spring.datasource.url=jdbc:postgresql://postgesdb:5432/unisec
-    restart: unless-stopped
-    depends_on:
-      - config-service
-    links:
-      - config-service
-    command: sh -c "/app/scripts/waitforservices.sh ${CONFIGSERVER_SERVICE_NAME}:${CONFIGSERVER_PORT} -t 50 -- java -Djava.security.egd=file:/dev/./urandom -jar /app/service.jar"
+#  security-service:
+#    build: ./universum-auth-service
+#    networks: 
+#      - universum-network
+#    container_name: security-service
+#    volumes:
+#      - ${PWD}/log:/app/logs/
+#    environment:
+#      - eureka.client.serviceUrl.defaultZone=http://${DISCOVERY_SERVICE_NAME}:${DISCOVERY_PORT}/eureka/
+#      - spring.datasource.url=jdbc:postgresql://postgesdb:5432/unisec
+#    restart: unless-stopped
+#    depends_on:
+#      - config-service
+#    links:
+#      - config-service
+#    command: sh -c "/app/scripts/waitforservices.sh ${CONFIGSERVER_SERVICE_NAME}:${CONFIGSERVER_PORT} -t 50 -- java -Djava.security.egd=file:/dev/./urandom -jar /app/service.jar"
     
-  label-service:
-    build: ./universum-translation-service
-    networks: 
-      - universum-network
-    container_name: label-service
-    volumes:
-      - ${PWD}/log:/app/logs/
-    environment:
-      - eureka.client.serviceUrl.defaultZone=http://${DISCOVERY_SERVICE_NAME}:${DISCOVERY_PORT}/eureka/
-      - spring.datasource.url=jdbc:postgresql://postgesdb:5432/uniintl
-    restart: unless-stopped
-    depends_on:
-      - config-service
-    links:
-      - config-service
-    command: sh -c "/app/scripts/waitforservices.sh ${CONFIGSERVER_SERVICE_NAME}:${CONFIGSERVER_PORT} -t 50 -- java -Djava.security.egd=file:/dev/./urandom -jar /app/service.jar"
+#  label-service:
+#    build: ./universum-translation-service
+#    networks: 
+#      - universum-network
+#    container_name: label-service
+#    volumes:
+#      - ${PWD}/log:/app/logs/
+#    environment:
+#      - eureka.client.serviceUrl.defaultZone=http://${DISCOVERY_SERVICE_NAME}:${DISCOVERY_PORT}/eureka/
+#      - spring.datasource.url=jdbc:postgresql://postgesdb:5432/uniintl
+#    restart: unless-stopped
+#    depends_on:
+#      - config-service
+#    links:
+#      - config-service
+#    command: sh -c "/app/scripts/waitforservices.sh ${CONFIGSERVER_SERVICE_NAME}:${CONFIGSERVER_PORT} -t 50 -- java -Djava.security.egd=file:/dev/./urandom -jar /app/service.jar"
