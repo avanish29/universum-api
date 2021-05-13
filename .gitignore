@@ -26,3 +26,4 @@ target
 /universum-zuul-api-gateway/.settings
 /universum-zuul-api-gateway/target
 /universum-zuul-api-gateway/.classpath
+/.docker/
