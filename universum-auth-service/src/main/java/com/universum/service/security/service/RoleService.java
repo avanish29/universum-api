@@ -28,11 +28,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.universum.common.dto.request.PageSearchRequest;
 import com.universum.common.dto.response.PageSearchResponse;
 import com.universum.common.exception.NotFoundException;
+import com.universum.multitenant.tenant.annotation.TenantTransactional;
 import com.universum.security.util.AuthenticationConstant;
 import com.universum.service.security.domain.Role;
 import com.universum.service.security.dto.request.CreateRoleRequest;
@@ -50,7 +50,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Service
-@Transactional
+@TenantTransactional
 @PreAuthorize("hasAnyRole('" + AuthenticationConstant.SYSTEM_ADMIN + "', '" + AuthenticationConstant.SUPER_ADMIN + "')")
 public class RoleService {
 	private static final Function<CreateRoleRequest, Role> ROLE_DTO_TO_ENTITY_MAPPER = RoleMapper.INSTANCE::toEntity;
@@ -65,7 +65,7 @@ public class RoleService {
 	 * @param pageSearchRequest - Instance of {@link PageSearchRequest} contains paging restrictions.
 	 * @return a page of {@link RoleResponse}
 	 */
-	@Transactional(readOnly = true)
+	@TenantTransactional(readOnly = true)
 	public PageSearchResponse<RoleResponse> findAllRoles(@NonNull final PageSearchRequest pageSearchRequest) {
 		log.info("Find all roles request {}", pageSearchRequest);
 		Page<Role> pageResult = roleRepository.findAll(pageSearchRequest.pageable());
@@ -80,7 +80,7 @@ public class RoleService {
 	 * @param id - Id must not be {@literal null}.
 	 * @return - The instance of {@link RoleResponse} with the given id or {@literal NotFoundException} if none found.
 	 */
-	@Transactional(readOnly = true)
+	@TenantTransactional(readOnly = true)
 	public RoleResponse findById(@NonNull final Long id) {
 		return RoleResponse.fromEntity(findByIdElseThrows(id));
 	}

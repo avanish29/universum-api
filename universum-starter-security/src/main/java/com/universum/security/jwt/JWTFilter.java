@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -27,10 +26,10 @@ public class JWTFilter extends GenericFilterBean {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		HttpServletRequest httpServletRequest = (HttpServletRequest) request;
+		var httpServletRequest = (HttpServletRequest) request;
 		String bearerToken = resolveToken(httpServletRequest);
 		if(StringUtils.isNotBlank(bearerToken) && this.jwtTokenProvider.validateToken(bearerToken)) {
-			Authentication authentication = this.jwtTokenProvider.getAuthentication(bearerToken);
+			var authentication = this.jwtTokenProvider.getAuthentication(bearerToken);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 		}
 		chain.doFilter(request, response);

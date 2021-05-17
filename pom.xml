@@ -19,6 +19,7 @@
 		<module>universum-secondry-model-service</module>
 		<module>universum-model-service</module>
 		<module>universum-link-model-service</module>
+		<module>universum-starter-multitenant</module>
 	</modules>
 
 	<parent>

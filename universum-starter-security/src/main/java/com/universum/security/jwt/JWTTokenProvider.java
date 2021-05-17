@@ -20,7 +20,6 @@ import org.springframework.util.Assert;
 
 import com.universum.security.property.UniversumSecurityProperties;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -48,11 +47,11 @@ public class JWTTokenProvider {
 	
 	@PostConstruct
     public void init() {
-		String secret = universumProperties.getSecurity().getAuthentication().getJwt().getSecret();
+		String secret = universumProperties.getAuthentication().getJwt().getSecret();
 		byte[] keyBytes = Decoders.BASE64.decode(secret);
 		this.secretKey = Keys.hmacShaKeyFor(keyBytes);
-		this.tokenValidityInMilliseconds = 1000 * this.universumProperties.getSecurity().getAuthentication().getJwt().getTokenValidityInSeconds();
-	    this.tokenValidityInMillisecondsForRememberMe = 1000 * this.universumProperties.getSecurity().getAuthentication().getJwt().getTokenValidityInSecondsForRememberMe();
+		this.tokenValidityInMilliseconds = 1000 * this.universumProperties.getAuthentication().getJwt().getTokenValidityInSeconds();
+	    this.tokenValidityInMillisecondsForRememberMe = 1000 * this.universumProperties.getAuthentication().getJwt().getTokenValidityInSecondsForRememberMe();
 	}
 	
 	public String createToken(final Authentication authentication, boolean rememberMe) {
@@ -69,6 +68,7 @@ public class JWTTokenProvider {
     	
     	return Jwts.builder()
     			   .setSubject(authentication.getName())
+    			   //.setAudience(authorities) Set Tenant ID as Audience
     			   .claim(AUTHORITIES_KEY, authorities)
     			   .signWith(secretKey, SignatureAlgorithm.HS512)
     			   .setExpiration(validity)
@@ -77,13 +77,13 @@ public class JWTTokenProvider {
     }
 	
 	public Authentication getAuthentication(final String authToken) {
-    	Claims claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(authToken).getBody();
+    	var claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(authToken).getBody();
     	Collection<? extends GrantedAuthority> roles = Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     	return new UsernamePasswordAuthenticationToken(new User(claims.getSubject(), "", roles), authToken, roles);
     }
 	
 	public boolean validateToken(final String authToken) {
-    	boolean isValidToken = false;
+    	var isValidToken = false;
     	try {
     		Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(authToken);
     		isValidToken = true;

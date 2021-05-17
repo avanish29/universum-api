@@ -29,19 +29,19 @@ spring:
     loadbalancer:
       ribbon:
         enabled: false
-  datasource:
-    url: jdbc:postgresql://localhost:5432/universumsec
-    username: root
-    password: root
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQL82Dialect
-    show-sql: true
+  #datasource:
+  #  url: jdbc:postgresql://localhost:5432/universumsec?ApplicationName=UniversumAuthService # Set the application name in postgresql, so that it should reflect on pg_stat_activity --> application_name column.
+  #  username: root
+  #  password: root
+  #jpa:
+  #  hibernate:
+  #    ddl-auto: validate
+  #  properties:
+  #    hibernate:
+  #      dialect: org.hibernate.dialect.PostgreSQL82Dialect
+  #  show-sql: true
   flyway:
-    enabled: true
+    enabled: false
     validate-on-migrate: false
     baseline-on-migrate: true
     table: schema_version
@@ -120,7 +120,8 @@ eureka:
       git-version: ${git.commit.id.describe:}
       git-commit: ${git.commit.id.abbrev:}
       git-branch: ${git.branch:}
-      management.context-path: ${management.endpoints.web.base-path}
+      management:
+        context-path: ${management.endpoints.web.base-path}
   client:
     enabled: true
     healthcheck:
@@ -143,11 +144,25 @@ logging:
   file:
     name: ..//logs//security-service.log
     
-# ===================================================================
+# ===============================================================================================================================================================================================
 # Application specific properties
-# ===================================================================
+# ===============================================================================================================================================================================================
 universum:
   security:
     authentication:
       jwt:
         secret: JDJ5JDEwJEdCSVFhZjZnRWVVOWltOFJUS2hJZ09aNXE1aGFEQS5BNUd6b2NTcjVDUi5zVThPVXNDVXdxasTARSIHNXDkDLWPSKAGXFSYBC
+  tenant:
+    defaultTenant: universumsec
+  catalog:
+    datasource:
+        url: jdbc:postgresql://localhost:5432/catalog?ApplicationName=UniversumAuthService
+        username: root
+        password: root
+        driverClassName: org.postgresql.Driver
+        connectionTimeout: 20000
+        maxPoolSize: 250
+        idleTimeout: 300000
+        minIdle: 5
+        poolName: catalog-connection-pool
+        hbm2ddl: none  

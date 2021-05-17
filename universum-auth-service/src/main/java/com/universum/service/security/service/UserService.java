@@ -28,11 +28,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.universum.common.dto.request.PageSearchRequest;
 import com.universum.common.dto.response.PageSearchResponse;
 import com.universum.common.exception.NotFoundException;
+import com.universum.multitenant.tenant.annotation.TenantTransactional;
 import com.universum.security.util.AuthenticationConstant;
 import com.universum.service.security.domain.Role;
 import com.universum.service.security.domain.User;
@@ -40,6 +40,7 @@ import com.universum.service.security.dto.request.CreateUserRequest;
 import com.universum.service.security.dto.request.UpdateUserRequest;
 import com.universum.service.security.dto.response.UserResponse;
 import com.universum.service.security.listener.AuthenticationAuditListener;
+import com.universum.service.security.listener.AuthenticationAuditListener.AuthenticationEventType;
 import com.universum.service.security.repository.RoleRepository;
 import com.universum.service.security.repository.UserRepository;
 import com.universum.service.security.service.mapper.UserMapper;
@@ -52,7 +53,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author Avanish
  */
 @Service
-@Transactional
+@TenantTransactional
 @Slf4j
 public class UserService implements UserDetailsService {
 	@Autowired
@@ -73,7 +74,7 @@ public class UserService implements UserDetailsService {
 	 * @param pageSearchRequest - Instance of {@link PageSearchRequest} contains restrictions used to construct criteria query
 	 * @return - Instance of {@link PageSearchResponse} contains page result of {@link UserResponse}
 	 */
-	@Transactional(readOnly = true)
+	@TenantTransactional(readOnly = true)
 	@PreAuthorize("hasAnyRole('" + AuthenticationConstant.SYSTEM_ADMIN + "', '" + AuthenticationConstant.SUPER_ADMIN + "')")
 	public PageSearchResponse<UserResponse> getAllUsers(@NonNull final PageSearchRequest pageSearchRequest) {
 		log.info("Find all users request {}", pageSearchRequest);
@@ -89,7 +90,7 @@ public class UserService implements UserDetailsService {
 	 * @param id - Id must not be {@literal null}.
 	 * @return - The instance of {@link UserResponse} with the given id or {@literal NotFoundException} if none found.
 	 */
-	@Transactional(readOnly = true)
+	@TenantTransactional(readOnly = true)
 	@PreAuthorize("hasAnyRole('" + AuthenticationConstant.SYSTEM_ADMIN + "', '" + AuthenticationConstant.SUPER_ADMIN + "')")
 	public UserResponse findUserById(@NonNull final Long id) {
 		return UserResponse.fromEntity(this.findByIdElseThrows(id), true);
@@ -102,7 +103,7 @@ public class UserService implements UserDetailsService {
 	 *  @return -  A fully populated user record (never <code>null</code>)
 	 */
 	@Override
-	@Transactional(readOnly = true)
+	@TenantTransactional(readOnly = true)
 	public UserDetails loadUserByUsername(final String userName) throws UsernameNotFoundException {
 		return UserResponse.fromEntity(
 				userRepository.findOneWithRolesByUsername(userName)

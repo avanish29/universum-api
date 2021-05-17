@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+com.universum.multitenant.catalog.config.CatalogDatabaseConfig,\
+com.universum.multitenant.tenant.config.TenantDatabaseConfig,\
+com.universum.multitenant.tenant.web.WebConfiguration

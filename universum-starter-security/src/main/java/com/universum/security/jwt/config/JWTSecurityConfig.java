@@ -58,9 +58,9 @@ public class JWTSecurityConfig extends WebSecurityConfigurerAdapter {
         						// All JS, CSS & HTML pages should be publicly accessible
         						.antMatchers(AUTH_WHITELIST).permitAll()
         						// Allow all admin endpoints for user with role ADMIN
-        						.antMatchers(universumProperties.getSecurity().getAdminEndpoints()).hasRole("ADMIN")
+        						.antMatchers(universumProperties.getAdminEndpoints()).hasRole("ADMIN")
         						// Allow all unsecured get endpoints
-        						.antMatchers(HttpMethod.GET, universumProperties.getSecurity().getUnsecuredGetEndpoints()).permitAll()
+        						.antMatchers(HttpMethod.GET, universumProperties.getUnsecuredGetEndpoints()).permitAll()
         						// User with role SUPER_ADMIN has all permission
         						.antMatchers(HttpMethod.GET, "/languages/**").permitAll()
         						// Our private endpoints
